@@ -1,0 +1,13 @@
+version: "3"
+services:
+  api-gateway-service:
+      build: ./
+      volumes:
+        - ./src:/app/src
+      container_name: api-gateway-service
+      restart: always
+      env_file:
+        - web-variables.env
+      ports:
+        - 8081:8081
+      command: npm run dev
