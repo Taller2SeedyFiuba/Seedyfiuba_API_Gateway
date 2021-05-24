@@ -7,7 +7,7 @@ const cors = require('cors');
 const startRoutes = require("./routes");
 
 //Importamos handlers de error
-const { notDefinedHandler, errorHandler} = require("./errors/errorHandler");
+const { notDefinedHandler, errorHandler} = require("./errors/handler");
 
 function start(database){
 
@@ -18,6 +18,7 @@ function start(database){
     app.use(morgan('dev')); //Escupir a archivo con una ip y timestamp.
     app.use(json());
     app.use(cors());
+
     //Rutas
     startRoutes(app);
 

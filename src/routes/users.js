@@ -4,7 +4,7 @@ const router = express.Router();
 const controller = require('../controllers/users');
 const authService = require('../services/auth');
 
-const { hocError } = require('../errors/errorHandler');
+const { hocError } = require('../errors/handler');
 
 const authServiceWithError = hocError(authService.authorize);
 

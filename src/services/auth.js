@@ -2,7 +2,7 @@
 
 const admin = require("firebase-admin");
 
-const { hocError } = require("../errors/errorHandler");
+const { hocError } = require("../errors/handler");
 const { ApiError } = require("../errors/ApiError");
 
 const configJson = process.env.FIREBASE_KEY || "{}";

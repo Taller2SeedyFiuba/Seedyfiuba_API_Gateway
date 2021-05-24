@@ -3,7 +3,7 @@
 const axios = require('axios');
 const URL = 'https://seedyfiuba-back-users.herokuapp.com/api';
 
-const { msErrorHandler } = require('../errors/errorHandler');
+const { msErrorHandler } = require('../errors/handler');
 
 exports.me = async(req, res, next) => {
   let reqRes;
