@@ -1,10 +1,14 @@
 
 const express = require('express');
 const router = express.Router();
-const controller = require('../controllers/users.controller');
-const authService = require('../services/auth.service');
+const controller = require('../controllers/users');
+const authService = require('../services/auth');
 
-router.get('/me', authService.authorize,  controller.me);
-router.post('/', authService.authorize, controller.post);
+const { hocError } = require('../errors/errorHandler');
+
+const authServiceWithError = hocError(authService.authorize);
+
+router.get('/me', authServiceWithError,  hocError(controller.me));
+router.post('/', authServiceWithError, hocError(controller.post));
 
 module.exports = router;

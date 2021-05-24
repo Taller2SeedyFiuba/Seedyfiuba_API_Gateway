@@ -2,25 +2,25 @@
 
 const admin = require("firebase-admin");
 
-console.log(JSON.parse(process.env.FIREBASE_KEY));
 const { hocError } = require("../errors/errorHandler");
 const { ApiError } = require("../errors/ApiError");
 
-const configJson = process.env.FIREBASE_KEY || {};
+const configJson = process.env.FIREBASE_KEY || "{}";
 
 admin.initializeApp({
   credential: admin.credential.cert(JSON.parse(configJson))
 });
 
-exports.authorize = hocError(async function (req, res, next) {
+exports.authorize = async function (req, res, next) {
   const authHeader = req.headers['authorization'];
-  console.log(req.header);
+
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     throw ApiError.notAuthorized('missing-auth-header');
   }
 
   const token = authHeader.substring(7, authHeader.length);
-  let decodedToken; 
+  let decodedToken;
+
   try {
     decodedToken = await admin.auth().verifyIdToken(token);
   } catch (err) {
@@ -30,7 +30,7 @@ exports.authorize = hocError(async function (req, res, next) {
   const uid = decodedToken.uid;
   req.id = uid;
   next();
-});
+};
 
 // exports.isAdmin = function (req, res, next) {
 //   let token = req.body.token || req.query.token || req.headers['x-access-token'];
