@@ -36,6 +36,7 @@ function errorHandler(error, req, res, next) {
       })
     }
   }
+
   console.error("SERVER ERROR: " + error.message);
   return res.status(500).json({
     "status": "error",

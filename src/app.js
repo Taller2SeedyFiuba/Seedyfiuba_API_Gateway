@@ -9,7 +9,7 @@ const startRoutes = require("./routes");
 //Importamos handlers de error
 const { notDefinedHandler, errorHandler} = require("./errors/handler");
 
-function start(database){
+function start(){
 
     //Iniciamos la aplicacion
     const app = express();

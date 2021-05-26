@@ -5,7 +5,10 @@ const startRoutes = (app) => {
 
   app.get('/status', (req, res) => {
     return res.status(200).json({
-      "users": "OK"
+      "status": "success",
+      "data": {
+        "users": "OK"
+      }
     });
   });
 }
