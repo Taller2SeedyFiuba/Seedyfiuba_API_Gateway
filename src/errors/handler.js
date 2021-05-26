@@ -8,10 +8,13 @@ function msErrorHandler(err) {
     throw new ApiError(response.status, response.data.error);
   } else if (request) {
     console.log(request);
-    throw ApiError.dependencyError('back-users-req-error');
-  } else {
+    //throw ApiError.dependencyError('back-users-req-error'); //OJO: Si falla el servicio de proyectos se manda fruta
+                                                              //Me parece mejor mandar un 'internal-service-req-error'
+    throw ApiError.dependencyError('internal-service-req-error')
+  } else {                                                    
     console.log('Error', message);
-    throw ApiError.dependencyError('back-users-unavailable');
+    //throw ApiError.dependencyError('back-users-unavailable');
+    throw ApiError.dependencyError('internal-service-unavailable');
   }
 }
 
