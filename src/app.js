@@ -19,6 +19,9 @@ function start(database){
     app.use(json());
     app.use(cors());
 
+    //Deshabilitamos el parseo de querys
+    app.disable('query parser')
+
     //Rutas
     startRoutes(app);
 

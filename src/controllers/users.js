@@ -9,7 +9,6 @@ exports.me = async(req, res, next) => {
   let reqRes;
 
   try {
-    console.log("ACA");
     reqRes = await axios.get(URL + '/' + req.id);
   } catch (err) {
     msErrorHandler(err);
