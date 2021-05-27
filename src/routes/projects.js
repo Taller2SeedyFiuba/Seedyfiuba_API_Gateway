@@ -9,7 +9,7 @@ const authServiceWithError = hocError(authService.authorize);
 
 router.get('/search', authServiceWithError,  hocError(controller.search));
 router.get('/view/:id', authServiceWithError, hocError(controller.view));
-router.post('/:id', authServiceWithError, hocError(controller.create));
+router.post('/', authServiceWithError, hocError(controller.create));
 router.put('/:id', authServiceWithError, hocError(controller.update));
 
 /** RUTAS QUE NECESITAMOS
