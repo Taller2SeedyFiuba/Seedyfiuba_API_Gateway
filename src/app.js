@@ -24,10 +24,10 @@ function start(){
 
     //Rutas
     startRoutes(app);
+    app.use('/static', express.static(__dirname + '/public'));
 
     app.use(notDefinedHandler);
     app.use(errorHandler);
-
     return app;
 }
 

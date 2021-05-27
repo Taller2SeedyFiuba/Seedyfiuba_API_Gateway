@@ -1,0 +1,14 @@
+.firebase-panel{
+  padding: 10px;
+}
+
+.swagger-ui .topbar { display: none }
+
+.firebase-panel {
+  padding: 10px;
+}
+
+.firebase-panel pre {
+  white-space: pre-wrap;
+  overflow: hidden;
+}

@@ -16,7 +16,10 @@ const startRoutes = (app) => {
       }
     });
   });
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+    customJs: '/static/loadFirebase.js',
+    customCssUrl: '/static/loadFirebase.css',
+  }));
 }
 
 module.exports = startRoutes;
