@@ -10,7 +10,7 @@ exports.search = async(req, res, next) => {
   let reqRes;
   try {
     const query = req.originalUrl.substring(req.originalUrl.indexOf('?'))
-    reqRes = await axios.get(URL + '/filter' + query);
+    reqRes = await axios.get(URL + '/search' + query);
   } catch (err) {
     msErrorHandler(err);
   }

@@ -39,7 +39,7 @@ test('/search successful response', async () => {
 
   expect(res.status).toHaveBeenCalledWith(200);
   expect(res.json).toHaveBeenCalledWith(resObj.data);
-  expect(axios.get).toHaveBeenCalledWith(PROJECT_URL + '/filter' + searchQuery)
+  expect(axios.get).toHaveBeenCalledWith(PROJECT_URL + '/search' + searchQuery)
 });
 
 
