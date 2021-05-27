@@ -9,7 +9,7 @@ exports.me = async(req, res, next) => {
   let reqRes;
 
   try {
-    reqRes = await axios.get(URL + '/' + req.id);
+    reqRes = await axios.get(URL + '/users/' + req.id);
   } catch (err) {
     msErrorHandler(err);
   }
@@ -20,7 +20,7 @@ exports.me = async(req, res, next) => {
 exports.post = async(req, res, next) => {
   let reqRes;
   try {
-    reqRes = await axios.post(URL, {
+    reqRes = await axios.post(URL + '/users', {
       id: req.id,
       ... req.body
     });

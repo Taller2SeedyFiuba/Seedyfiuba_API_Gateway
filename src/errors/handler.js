@@ -5,7 +5,7 @@ function msErrorHandler(err) {
 
   if (response) {
     console.log(response.data, response.status);
-    throw new ApiError(response.status, response.data.error);
+    throw new ApiError(response.status, response.data.message);
   } else if (request) {
     console.log(request);
     //throw ApiError.dependencyError('back-users-req-error'); //OJO: Si falla el servicio de proyectos se manda fruta

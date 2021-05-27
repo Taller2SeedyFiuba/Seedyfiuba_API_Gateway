@@ -1,5 +1,7 @@
 const users = require('./users');
 const projects = require('./projects');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('../docs/openapi.json');
 
 const startRoutes = (app) => {
   app.use('/users', users);
@@ -14,6 +16,7 @@ const startRoutes = (app) => {
       }
     });
   });
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 }
 
 module.exports = startRoutes;
