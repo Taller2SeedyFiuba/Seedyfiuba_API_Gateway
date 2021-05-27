@@ -23,6 +23,7 @@ function loadFirebase() {
       measurementId: "G-XPS2V73FZN"
     });
     firebase.auth().onAuthStateChanged(firebaseUser => {
+      if (!firebaseUser) return;
       firebaseUser.getIdToken().then(setApiKey).catch(function(error) {
         // Handle error
       });
@@ -34,8 +35,7 @@ function loadFirebase() {
 const setApiKey = (apiToken) => {
   console.log(apiToken);
   const divEl = document.getElementById("idToken");
-
-  divEl.insertAdjacentText('afterbegin', apiToken);
+  divEl.innerHTML = apiToken;
 }
 
 const userLogin = (e) => {
@@ -52,8 +52,8 @@ const userLogin = (e) => {
       var user = userCredential.user;
     })
     .catch((error) => {
-      var errorCode = error.code;
-      var errorMessage = error.message;
+      const divEl = document.getElementById("login-error");
+      divEl.innerHTML = error.message;
     });
 }
 
@@ -68,6 +68,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
           <input type="submit" class="btn modal-btn auth authorize button" value="Ingresar" />
 
         </form>
+        <div id="login-error" class="error-message"></div>
       </div>
       <div class="firebase-token-display">
         <p>ApiToken: </p>
