@@ -8,8 +8,10 @@ const { msErrorHandler } = require('../errors/handler');
 
 exports.search = async(req, res, next) => {
   let reqRes;
+  let query = ''
   try {
-    const query = req.originalUrl.substring(req.originalUrl.indexOf('?'))
+    const idx = req.originalUrl.indexOf('?')
+    if (idx != -1) query = req.originalUrl.substring(idx)
     reqRes = await axios.get(URL + '/search' + query);
   } catch (err) {
     msErrorHandler(err);

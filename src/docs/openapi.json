@@ -458,10 +458,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "ownerid": {
-                  "type": "string",
-                  "example": "05yseyhiEWPNvkYYbdHL77dHKWi1"
-                },
                 "title": {
                   "type": "string",
                   "example": "10000 Arboles para Chaco"
@@ -469,6 +465,10 @@
                 "description": {
                   "type": "string",
                   "example": "Este proyecto busca fondos para crear una obra de arte en Chaco"
+                },
+                "type": {
+                  "type": "string",
+                  "example": "art"
                 },
                 "finishdate": {
                   "type": "string",
@@ -481,6 +481,19 @@
                 "seeragreement": {
                   "type": "string",
                   "example": "Debera comprometerse a realizar viajes periodicos a Chaco"
+                },
+                "location": {
+                  "type": "object",
+                  "properties": {
+                    "lat": {
+                      "type": "numeric",
+                      "example": 120
+                    },
+                    "lng": {
+                      "type": "numeric",
+                      "example": 40
+                    }
+                  }
                 },
                 "tags": {
                   "type": "array",
