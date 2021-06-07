@@ -3,7 +3,7 @@ const { ApiError } = require("./ApiError");
 function errorResponse(res, status, error){
   return res.status(status).json({
     "status": "error",
-    error
+    "message": error
   })
 }
 

@@ -95,7 +95,7 @@ test('/post successful response', async () => {
 
   await post(req, res);
 
-  expect(res.status).toHaveBeenCalledWith(200);
+  expect(res.status).toHaveBeenCalledWith(201);
   expect(res.json).toHaveBeenCalledWith(resObj.data);
 });
 
