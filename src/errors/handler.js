@@ -1,50 +1,47 @@
 const { ApiError } = require("./ApiError");
 
-function msErrorHandler(err) {
+function errorResponse(res, status, error){
+  return res.status(status).json({
+    "status": "error",
+    error
+  })
+}
+
+function msErrorHandler(err, res) {
   const { response, request, message } = err;
 
   if (response) {
     console.log(response.data, response.status);
-    throw new ApiError(response.status, response.data.message);
+    return errorResponse(res, response.status, response.data.message)
   } else if (request) {
     console.log(request);
-    //throw ApiError.dependencyError('back-users-req-error'); //OJO: Si falla el servicio de proyectos se manda fruta
-                                                              //Me parece mejor mandar un 'internal-service-req-error'
-    throw ApiError.dependencyError('internal-service-req-error')
+    return errorResponse(res, response.status, 'internal-service-req-error')
   } else {                                                    
     console.log('Error', message);
-    //throw ApiError.dependencyError('back-users-unavailable');
-    throw ApiError.dependencyError('internal-service-unavailable');
+    return errorResponse(res, ApiError.codes.dependencyError, 'internal-service-req-error')
   }
 }
 
 function notDefinedHandler(req, res, next) {
   //Create error msg
-  let error = ApiError.notFound("Asked resource do not exists")
+  const error = ApiError.notFound("Asked resource do not exists")
   next(error);
 }
 
 function errorHandler(error, req, res, next) {
   if (error instanceof ApiError) {
-    return res.status(error.code).json({
-      "status": "error",
-      "message": error.message
-    })
+    return errorResponse(res, error.code, error.message)
+  }
+  if (error.isAxiosError){
+    return msErrorHandler(error, res)
   }
   if (error instanceof Error) {
     if (error.status && error.status < 500) {
-      return res.status(error.status).json({
-        "status": "error",
-        "error": error.message
-      })
+      return errorResponse(res, error.status, error.message)
     }
   }
-
   console.error("SERVER ERROR: " + error.message);
-  return res.status(500).json({
-    "status": "error",
-    "error": "internal-server-error"
-  })
+  return errorResponse(res, ApiError.codes.serverError, "internal-server-error")
 }
 
 const hocError = fn => (req, res, next) =>

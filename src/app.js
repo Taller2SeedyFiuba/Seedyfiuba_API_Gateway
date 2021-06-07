@@ -20,9 +20,6 @@ function start(){
     app.use(json());
     app.use(cors());
 
-    //Deshabilitamos el parseo de querys
-    app.disable('query parser')
-
     //Rutas
     startRoutes(app);
     app.use('/static', express.static(path.join(__dirname, 'public')));
