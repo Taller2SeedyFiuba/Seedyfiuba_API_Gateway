@@ -1,14 +1,22 @@
 
 const express = require('express');
 const router = express.Router();
-const controller = require('../controllers/users');
+const userController = require('../controllers/users');
+const projectController = require('../controllers/projects');
 const authService = require('../services/auth');
 
 const { hocError } = require('../errors/handler');
 
 const authServiceWithError = hocError(authService.authorize);
 
-router.get('/me', authServiceWithError,  hocError(controller.me));
-router.post('/', authServiceWithError, hocError(controller.post));
+//Users
+router.get('/me', authServiceWithError,  hocError(userController.me));
+router.get('/profile/:id', authServiceWithError,  hocError(userController.getUser));
+router.post('/', authServiceWithError, hocError(userController.post));
+
+
+//User's projects
+router.get('/:id/projects', authServiceWithError,  hocError(projectController.getUserProjects));
+router.get('/projects/mine', authServiceWithError,  hocError(projectController.getMyProjects));
 
 module.exports = router;

@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const json = require('express').json;
 const morgan = require('morgan');
 const cors = require('cors');
@@ -9,7 +10,7 @@ const startRoutes = require("./routes");
 //Importamos handlers de error
 const { notDefinedHandler, errorHandler} = require("./errors/handler");
 
-function start(database){
+function start(){
 
     //Iniciamos la aplicacion
     const app = express();
@@ -19,15 +20,12 @@ function start(database){
     app.use(json());
     app.use(cors());
 
-    //Deshabilitamos el parseo de querys
-    app.disable('query parser')
-
     //Rutas
     startRoutes(app);
+    app.use('/static', express.static(path.join(__dirname, 'public')));
 
     app.use(notDefinedHandler);
     app.use(errorHandler);
-
     return app;
 }
 

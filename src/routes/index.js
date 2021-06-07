@@ -1,5 +1,7 @@
 const users = require('./users');
 const projects = require('./projects');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('../docs/openapi.json');
 
 const startRoutes = (app) => {
   app.use('/users', users);
@@ -8,9 +10,16 @@ const startRoutes = (app) => {
 
   app.get('/status', (req, res) => {
     return res.status(200).json({
-      "users": "OK"
+      "status": "success",
+      "data": {
+        "users": "OK"
+      }
     });
   });
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+    customJs: '/static/loadFirebase.js',
+    customCssUrl: '/static/loadFirebase.css',
+  }));
 }
 
 module.exports = startRoutes;

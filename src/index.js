@@ -2,7 +2,15 @@ const { start } = require("./app");
 const PORT = process.env.PORT || 8080;
 
 function main() {
-  const app = start();
+  let app;
+  
+  try {
+    app = start();
+  } catch (err) {
+    console.log(err);
+    process.exit();
+  }
+
 
   app.listen(PORT, () => {
     console.log(`Servidor escuchando en: http://localhost:${PORT}`);
