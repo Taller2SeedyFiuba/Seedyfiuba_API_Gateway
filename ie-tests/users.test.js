@@ -67,13 +67,13 @@ describe('GET /users/me', function() {
 describe('GET /users/profile/{id}', function() {
   it('Unauthorized response', async function(done) {
     const uid = await getUid();
-    const path = `/users/profile/${uid}`;
+    const path = `/users/${uid}/profile/`;
     testUnauthorized(app,'get', path, done);
   });
 
   it('Authorized response', async (done) => {
     const uid = await getUid();
-    const path = `/users/profile/${uid}`;
+    const path = `/users/${uid}/profile/`;
     const token = await getIdToken();
 
     testAuthorized(app, 'get', path, token)
