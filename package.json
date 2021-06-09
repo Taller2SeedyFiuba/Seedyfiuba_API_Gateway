@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon --inspect=0.0.0.0:8000 src/index.js",
     "start": "node src/index.js",
-    "test": "jest --collectCoverage"
+    "test": "jest --collectCoverage --config jest-unit.config.js",
+    "test-ie": "jest --config jest-ie.config.js"
   },
   "repository": {
     "type": "git",
@@ -28,8 +29,10 @@
     "swagger-ui-express": "^4.1.6"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7",
+    "faker": "^5.5.3",
+    "firebase": "^8.6.5",
     "jest": "^26.6.3",
+    "nodemon": "^2.0.7",
     "supertest": "^6.1.3"
   }
 }

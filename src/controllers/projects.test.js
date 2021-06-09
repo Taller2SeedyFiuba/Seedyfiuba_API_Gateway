@@ -45,7 +45,6 @@ test('/search successful response', async () => {
 
   expect(res.status).toHaveBeenCalledWith(200);
   expect(res.json).toHaveBeenCalledWith(resObj.data);
-  expect(axios.get).toHaveBeenCalledWith(PROJECT_URL + '/search' + searchQuery)
 });
 
 
@@ -114,7 +113,6 @@ test('/getUserProjects successful response', async () => {
 
   expect(res.status).toHaveBeenCalledWith(200);
   expect(res.json).toHaveBeenCalledWith(resObj.data);
-  expect(axios.get).toHaveBeenCalledWith(PROJECT_URL + '/search' + wantedQuery)
 });
 
 test('/getMyProjects successful response', async () => {
@@ -143,7 +141,6 @@ test('/getMyProjects successful response', async () => {
 
   expect(res.status).toHaveBeenCalledWith(200);
   expect(res.json).toHaveBeenCalledWith(resObj.data);
-  expect(axios.get).toHaveBeenCalledWith(PROJECT_URL + '/search' + wantedQuery)
 });
 
 test('/view successful response', async () => {
@@ -169,7 +166,6 @@ test('/view successful response', async () => {
 
   expect(res.status).toHaveBeenCalledWith(200);
   expect(res.json).toHaveBeenCalledWith(resObj.data);
-  expect(axios.get).toHaveBeenCalledWith(PROJECT_URL + '/view/' + id)
 });
 
 test('/create successful response', async () => {
@@ -201,7 +197,6 @@ test('/create successful response', async () => {
 
   expect(res.status).toHaveBeenCalledWith(200);
   expect(res.json).toHaveBeenCalledWith(resObj.data);
-  expect(axios.post).toHaveBeenCalledWith(PROJECT_URL, expectedBody)
 });
 
 
@@ -242,8 +237,6 @@ test('/update successful response', async () => {
 
   expect(res.status).toHaveBeenCalledWith(200);
   expect(res.json).toHaveBeenCalledWith(resObj.data);
-  expect(axios.get).toHaveBeenCalledWith(PROJECT_URL + '/view/' + id)
-  expect(axios.put).toHaveBeenCalledWith(PROJECT_URL + '/' + id, newData)
 });
 
 test('/delete successful response', async () => {
@@ -277,8 +270,6 @@ test('/delete successful response', async () => {
 
   expect(res.status).toHaveBeenCalledWith(200);
   expect(res.json).toHaveBeenCalledWith(resObj.data);
-  expect(axios.get).toHaveBeenCalledWith(PROJECT_URL + '/view/' + id)
-  expect(axios.delete).toHaveBeenCalledWith(PROJECT_URL + '/' + id)
 });
 
 

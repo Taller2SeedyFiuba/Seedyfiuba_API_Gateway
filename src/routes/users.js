@@ -11,7 +11,7 @@ const authServiceWithError = hocError(authService.authorize);
 
 //Users
 router.get('/me', authServiceWithError,  hocError(userController.me));
-router.get('/profile/:id', authServiceWithError,  hocError(userController.getUser));
+router.get('/:id/profile', authServiceWithError,  hocError(userController.getUser));
 router.post('/', authServiceWithError, hocError(userController.post));
 
 
