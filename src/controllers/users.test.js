@@ -40,7 +40,6 @@ test('/me successful response', async () => {
 
   expect(res.status).toHaveBeenCalledWith(200);
   expect(res.json).toHaveBeenCalledWith(resObj.data);
-  expect(axios.get).toHaveBeenCalledWith(USERS_URL + '/users/' + req.id)
 });
 
 test('/getUser successful response', async () => {
@@ -69,7 +68,6 @@ test('/getUser successful response', async () => {
 
   expect(res.status).toHaveBeenCalledWith(200);
   expect(res.json).toHaveBeenCalledWith(resObj.data);
-  expect(axios.get).toHaveBeenCalledWith(USERS_URL + '/users/' + req.params.id)
 });
 
 test('/post successful response', async () => { 

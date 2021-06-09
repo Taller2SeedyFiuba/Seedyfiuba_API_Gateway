@@ -1,9 +1,7 @@
 'use strict'
 
 const axios = require('axios');
-const URL = 'https://seedyfiuba-back-users.herokuapp.com/api';
-
-const { ApiError } = require('../errors/handler');
+const URL = process.env.USERS_MS;
 
 exports.me = async(req, res, next) => {
   const reqRes = await axios.get(URL + '/users/' + req.id);
