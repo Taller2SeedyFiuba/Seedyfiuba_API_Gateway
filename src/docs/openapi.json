@@ -525,7 +525,7 @@
         }
       }
     },
-    "/projects/view/{id}": {
+    "/projects/{id}/view": {
       "get": {
         "tags": [
           "projects"
