@@ -2,7 +2,7 @@
 
 const axios = require('axios');
 const { pick } = require('../util/util')
-const URL = process.env.PRJECTS_MS;
+const URL = process.env.PROJECTS_MS;
 
 const { ApiError } = require('../errors/ApiError');
 

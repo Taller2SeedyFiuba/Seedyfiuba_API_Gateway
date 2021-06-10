@@ -1,7 +1,7 @@
 const { ApiError } = require("./ApiError");
 
-function errorResponse(res, status, error){
-  return res.status(status).json({
+function errorResponse(res, stat, error){
+  return res.status(stat).json({
     "status": "error",
     "message": error
   })
@@ -12,7 +12,7 @@ function msErrorHandler(err, res) {
 
   if (response) {
     console.log(response.data, response.status);
-    return errorResponse(res, response.status, response.data.message)
+    return errorResponse(res, response.status, response.data.error)
   } else if (request) {
     console.log(request);
     return errorResponse(res, response.status, 'internal-service-req-error')

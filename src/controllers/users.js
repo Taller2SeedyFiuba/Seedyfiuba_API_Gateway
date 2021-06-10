@@ -5,7 +5,6 @@ const URL = process.env.USERS_MS;
 
 exports.me = async(req, res, next) => {
   const reqRes = await axios.get(URL + '/users/' + req.id);
-
   res.status(200).json(reqRes.data);
 };
 
