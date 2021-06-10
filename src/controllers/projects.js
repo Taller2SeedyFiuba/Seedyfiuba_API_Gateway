@@ -17,7 +17,9 @@ const publicAttributes = [
   'finishdate',
   'sponsorshipagreement',
   'seeragreement',
-  'location' 
+  'location',
+  'tags',
+  'Multimedia'
 ]
 
 exports.search = async(req, res, next) => {
