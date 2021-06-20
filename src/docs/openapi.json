@@ -32,7 +32,7 @@
           "$ref": "#/components/requestBodies/UserBody"
         },
         "responses": {
-          "201": {
+          "200": {
             "description": "OK",
             "content": {
               "application/json": {
@@ -85,7 +85,7 @@
         }
       }
     },
-    "/users/{id}/profile": {
+    "/users/profile/{id}": {
       "get": {
         "tags": [
           "users"
@@ -145,7 +145,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "ID of the user to get profile information"
+            "description": "ID of the user who's projects want to be queried"
           },
           {
             "in": "query",
@@ -232,25 +232,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "integer",
-                        "example": 5
-                      },
-                      "ownerid": {
-                        "type": "string",
-                        "example": "05yseyhiEWPNvkYYbdHL77dHKWi1"
-                      },
-                      "title": {
-                        "type": "string",
-                        "example": "10000 Arboles para Chaco"
-                      },
-                      "icon": {
-                        "type": "string",
-                        "example": "daoiacpoa12mcahw21hd72ja"
-                      }
-                    }
+                    "$ref": "#/components/schemas/ResumeProject"
                   }
                 }
               }
@@ -358,25 +340,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "integer",
-                        "example": 5
-                      },
-                      "ownerid": {
-                        "type": "string",
-                        "example": "05yseyhiEWPNvkYYbdHL77dHKWi1"
-                      },
-                      "title": {
-                        "type": "string",
-                        "example": "10000 Arboles para Chaco"
-                      },
-                      "icon": {
-                        "type": "string",
-                        "example": "daoiacpoa12mcahw21hd72ja"
-                      }
-                    }
+                    "$ref": "#/components/schemas/ResumeProject"
                   }
                 }
               }
@@ -403,9 +367,9 @@
             "in": "query",
             "name": "ownerid",
             "schema": {
-              "type": "integer"
+              "type": "string"
             },
-            "description": "Numeric ID of the project to get"
+            "description": "ID of the user who's projects want to be queried"
           },
           {
             "in": "query",
@@ -492,25 +456,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "integer",
-                        "example": 5
-                      },
-                      "ownerid": {
-                        "type": "string",
-                        "example": "05yseyhiEWPNvkYYbdHL77dHKWi1"
-                      },
-                      "title": {
-                        "type": "string",
-                        "example": "10000 Arboles para Chaco"
-                      },
-                      "icon": {
-                        "type": "string",
-                        "example": "daoiacpoa12mcahw21hd72ja"
-                      }
-                    }
+                    "$ref": "#/components/schemas/ResumeProject"
                   }
                 }
               }
@@ -555,7 +501,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Project"
+                  "$ref": "#/components/schemas/FullProject"
                 }
               }
             }
@@ -594,7 +540,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Project"
+                  "$ref": "#/components/schemas/FullProject"
                 }
               }
             }
@@ -612,7 +558,7 @@
       }
     },
     "/projects/{id}": {
-      "put": {
+      "patch": {
         "tags": [
           "projects"
         ],
@@ -636,7 +582,20 @@
           }
         ],
         "requestBody": {
-          "$ref": "#/components/requestBodies/ProjectBody"
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "example": "Se desea realizar una obra de arte en Chaco, plantando arboles"
+                  }
+                }
+              }
+            }
+          }
         },
         "responses": {
           "200": {
@@ -644,58 +603,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Project"
+                  "$ref": "#/components/schemas/FullProject"
                 }
               }
             }
           },
           "400": {
             "description": "The specified project body information or id is not valid."
-          },
-          "404": {
-            "description": "A project with de specified ID was not found"
-          },
-          "default": {
-            "description": "Unexpected error"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "projects"
-        ],
-        "summary": "Delete project",
-        "description": "This can only be done by the owner user.",
-        "operationId": "deleteProject",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Numeric ID of the project to delete"
-          }
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Project"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The specified project id is not valid."
           },
           "404": {
             "description": "A project with de specified ID was not found"
@@ -744,7 +658,7 @@
           }
         }
       },
-      "Project": {
+      "FullProject": {
         "type": "object",
         "properties": {
           "id": {
@@ -765,31 +679,27 @@
           },
           "type": {
             "type": "string",
-            "example": "art"
+            "example": "arte"
           },
-          "stage": {
+          "state": {
             "type": "string",
             "example": "funding"
+          },
+          "actualstage": {
+            "type": "integer",
+            "example": 0
           },
           "creationdate": {
             "type": "string",
             "example": "2021-03-14"
           },
-          "finishdate": {
-            "type": "string",
-            "example": "2023-03-14"
-          },
-          "sponsorshipagreement": {
-            "type": "string",
-            "example": "Con su aporte de $5000 tendra derecho a que su nombre sea estampado en una placa junto a la obra"
-          },
-          "seeragreement": {
-            "type": "string",
-            "example": "Debera comprometerse a realizar viajes periodicos a Chaco"
-          },
           "location": {
             "type": "object",
             "properties": {
+              "description": {
+                "type": "string",
+                "example": "Chaco, Argentina"
+              },
               "lat": {
                 "type": "number",
                 "example": 120
@@ -821,6 +731,84 @@
               "jad892of7632nds81ksd98jd",
               "cs83a981ishaja8721odasa1"
             ]
+          },
+          "stages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "integer"
+                }
+              }
+            },
+            "example": [
+              {
+                "title": "Arboles en el sur",
+                "description": "Se plantaran 5000 arboles en el sur de Chaco",
+                "amount": 2000
+              },
+              {
+                "title": "Arboles en el norte",
+                "description": "Se plantaran 5000 arboles en el norte de Chaco",
+                "amount": 3000
+              }
+            ]
+          },
+          "totalamount": {
+            "type": "integer",
+            "example": 5000
+          },
+          "fundedamount": {
+            "type": "integer",
+            "example": 328
+          },
+          "sponsorscount": {
+            "type": "integer",
+            "example": 25
+          },
+          "favouritescount": {
+            "type": "integer",
+            "example": 10
+          }
+        }
+      },
+      "ResumeProject": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 5
+          },
+          "ownerid": {
+            "type": "string",
+            "example": "05yseyhiEWPNvkYYbdHL77dHKWi1"
+          },
+          "title": {
+            "type": "string",
+            "example": "10000 Arboles para Chaco"
+          },
+          "type": {
+            "type": "string",
+            "example": "arte"
+          },
+          "state": {
+            "type": "string",
+            "example": "funding"
+          },
+          "location": {
+            "type": "string",
+            "example": "Chaco, Argentina"
+          },
+          "icon": {
+            "type": "string",
+            "example": "daoiacpoa12mcahw21hd72ja"
           }
         }
       }
@@ -873,23 +861,15 @@
                 },
                 "type": {
                   "type": "string",
-                  "example": "art"
-                },
-                "finishdate": {
-                  "type": "string",
-                  "example": "2023-03-14"
-                },
-                "sponsorshipagreement": {
-                  "type": "string",
-                  "example": "Con su aporte de $5000 tendra derecho a que su nombre sea estampado en una placa junto a la obra"
-                },
-                "seeragreement": {
-                  "type": "string",
-                  "example": "Debera comprometerse a realizar viajes periodicos a Chaco"
+                  "example": "arte"
                 },
                 "location": {
                   "type": "object",
                   "properties": {
+                    "description": {
+                      "type": "string",
+                      "example": "Chaco, Argentina"
+                    },
                     "lat": {
                       "type": "number",
                       "example": 120
@@ -920,6 +900,35 @@
                     "daoiacpoa12mcahw21hd72ja",
                     "jad892of7632nds81ksd98jd",
                     "cs83a981ishaja8721odasa1"
+                  ]
+                },
+                "stages": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "amount": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "example": [
+                    {
+                      "title": "Arboles en el sur",
+                      "description": "Se plantaran 5000 arboles en el sur de Chaco",
+                      "amount": 2000
+                    },
+                    {
+                      "title": "Arboles en el norte",
+                      "description": "Se plantaran 5000 arboles en el norte de Chaco",
+                      "amount": 3000
+                    }
                   ]
                 }
               }

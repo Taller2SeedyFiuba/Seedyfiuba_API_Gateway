@@ -10,7 +10,7 @@ const authServiceWithError = hocError(authService.authorize);
 router.get('/search', authServiceWithError,  hocError(controller.search));
 router.get('/:id/view', authServiceWithError, hocError(controller.view));
 router.post('/', authServiceWithError, hocError(controller.create));
-router.put('/:id', authServiceWithError, hocError(controller.update));
+router.patch('/:id', authServiceWithError, hocError(controller.update));
 router.delete('/:id', authServiceWithError, hocError(controller.destroy));
 
 /** RUTAS QUE NECESITAMOS
