@@ -35,7 +35,7 @@ exports.search = async(req, res, next) => {
 };
 
 exports.view = async(req, res, next) => {
-  const reqRes = await axios.get(URL + '/view/' + req.params.id);
+  const reqRes = await axios.get(URL + '/' + req.params.id);
   const response = reqRes.data
   if (req.id != response.data.ownerid){
     response.data = pick(response.data, publicAttributes)
@@ -53,7 +53,7 @@ exports.create = async(req, res, next) => {
 }
 
 exports.update = async(req, res, next) => {
-  const auxRes = await axios.get(URL + '/view/' + req.params.id);
+  const auxRes = await axios.get(URL + '/' + req.params.id);
   const response = auxRes.data
   if (response.data.ownerid != req.id){
     throw ApiError.notAuthorized("You don't have permissions to update the project")
@@ -64,7 +64,7 @@ exports.update = async(req, res, next) => {
 }
 
 exports.destroy = async(req, res, next) => {
-  const auxRes = await axios.get(URL + '/view/' + req.params.id);
+  const auxRes = await axios.get(URL + '/' + req.params.id);
   const response = auxRes.data
   if (response.data.ownerid != req.id){
     throw ApiError.notAuthorized("You don't have permissions to delete the project")

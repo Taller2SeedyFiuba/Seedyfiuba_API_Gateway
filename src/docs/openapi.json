@@ -130,7 +130,7 @@
         }
       }
     },
-    "/users/{userid}/projects": {
+    "/users/{id}/projects": {
       "get": {
         "tags": [
           "projects"
@@ -140,7 +140,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "userid",
+            "name": "id",
             "required": true,
             "schema": {
               "type": "string"
@@ -471,7 +471,7 @@
         }
       }
     },
-    "/projects/{id}/view": {
+    "/projects/{id}": {
       "get": {
         "tags": [
           "projects"
@@ -516,48 +516,7 @@
             "description": "Unexpected error"
           }
         }
-      }
-    },
-    "/projects": {
-      "post": {
-        "tags": [
-          "projects"
-        ],
-        "summary": "Create project",
-        "description": "This can only be done by the logged in user.",
-        "operationId": "createProject",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "$ref": "#/components/requestBodies/ProjectBody"
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FullProject"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The specified project body information is not valid"
-          },
-          "404": {
-            "description": "A user with de specified ID (owneruserid) was not found"
-          },
-          "default": {
-            "description": "Unexpected error"
-          }
-        }
-      }
-    },
-    "/projects/{id}": {
+      },
       "patch": {
         "tags": [
           "projects"
@@ -613,6 +572,237 @@
           },
           "404": {
             "description": "A project with de specified ID was not found"
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/projects": {
+      "post": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Create project",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "createProject",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/ProjectBody"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FullProject"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The specified project body information is not valid"
+          },
+          "404": {
+            "description": "A user with de specified ID (owneruserid) was not found"
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/sponsors/mine": {
+      "get": {
+        "tags": [
+          "sponsors"
+        ],
+        "summary": "Search projects sponsored by logged user",
+        "operationId": "getSponsoredProjects",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of projects to retrieve"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page number of projects result to retrieve"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResumeProject"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/projects/{id}/sponsors": {
+      "post": {
+        "tags": [
+          "sponsors"
+        ],
+        "summary": "Sponsor a new project specified by id",
+        "operationId": "sponsorNewProject",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the project to sponsor"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResumeProject"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The specified project id is wrong."
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/favourites/mine": {
+      "get": {
+        "tags": [
+          "sponsors"
+        ],
+        "summary": "List logged user favourite projects",
+        "operationId": "getFavouriteProjects",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of projects to retrieve"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page number of projects result to retrieve"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResumeProject"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/projects/{id}/favourites": {
+      "post": {
+        "tags": [
+          "sponsors"
+        ],
+        "summary": "Project specified by id will be added to logged user favourite list",
+        "operationId": "favouritesNewProject",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the project to add to favourites"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResumeProject"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The specified project id is wrong."
           },
           "default": {
             "description": "Unexpected error"

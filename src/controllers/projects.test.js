@@ -229,7 +229,7 @@ test('/update successful response', async () => {
   }
 
   axios.get.mockReturnValue(getResponse);
-  axios.put.mockReturnValue(resObj);
+  axios.patch.mockReturnValue(resObj);
 
   const res = mockResponse();
 
