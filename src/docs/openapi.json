@@ -809,6 +809,213 @@
           }
         }
       }
+    },
+    "/viewers": {
+      "post": {
+        "tags": [
+          "viewers"
+        ],
+        "summary": "Add reviewing capabilities to the logged user",
+        "operationId": "addReviewer",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userid": {
+                      "type": "string",
+                      "example": "1lmoj2LKM10ADS"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/projects/review": {
+      "get": {
+        "tags": [
+          "viewers"
+        ],
+        "summary": "Returns a list of projects on review state",
+        "operationId": "reviewProjectList",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of projects to retrieve"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page number of projects result to retrieve"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResumeProject"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The user is not a reviewer"
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/projects/{id}/review": {
+      "post": {
+        "tags": [
+          "viewers"
+        ],
+        "summary": "Project specified by id will be reviewed by logged user",
+        "operationId": "viewersNewProject",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the project to review"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of projects to retrieve"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page number of projects result to retrieve"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userid": {
+                      "type": "string",
+                      "example": "1lmoj2LKM10ADS"
+                    },
+                    "projectid": {
+                      "type": "integer",
+                      "example": 2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The specified project id is wrong."
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/viewers/mine": {
+      "get": {
+        "tags": [
+          "viewers"
+        ],
+        "summary": "List logged user reviewed projects",
+        "operationId": "getReviewedProjects",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of projects to retrieve"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page number of projects result to retrieve"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResumeProject"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -844,7 +1051,12 @@
             "example": "1990-03-04"
           },
           "signindate": {
-            "type": "string"
+            "type": "string",
+            "example": "2021-05-12"
+          },
+          "isviewer": {
+            "type": "boolean",
+            "example": true
           }
         }
       },
@@ -966,6 +1178,10 @@
           "favouritescount": {
             "type": "integer",
             "example": 10
+          },
+          "isfavourite": {
+            "type": "boolean",
+            "example": true
           }
         }
       },
