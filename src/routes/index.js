@@ -2,6 +2,7 @@ const users = require('./users');
 const projects = require('./projects');
 const sponsors = require('./sponsors');
 const favourites = require('./favourites');
+const viewers = require('./viewers');
 const statusController = require('../controllers/status');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('../docs/openapi.json');
@@ -14,6 +15,8 @@ const startRoutes = (app) => {
   app.use('/sponsors', sponsors)
 
   app.use('/favourites', favourites)
+
+  app.use('/viewers', viewers)
 
   app.get('/status', statusController.getStatus);
   

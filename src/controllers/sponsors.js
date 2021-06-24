@@ -12,7 +12,7 @@ exports.addSponsor = async(req, res, next) => {
   catch(err => {
     if (err.response && err.response.status == ApiError.codes.notFound){
       throw ApiError.badRequest(err.response.data.error)
-    }
+    } else { throw err }
   })
   
   const { ownerid, state } = projectResponse.data.data
@@ -36,7 +36,7 @@ exports.addSponsor = async(req, res, next) => {
   //Si esto de aca llega a fallar queda un sponsor fantasma cargado en el servicio de sponsors
   await axios.patch(PROJECTS_URL + '/' + projectid, bodyProjects);
   
-  res.status(200).json(sponsorsResponse.data);
+  res.status(201).json(sponsorsResponse.data);
 };
   
 exports.getMySponsors = async(req, res, next) => {
@@ -62,7 +62,7 @@ exports.addFavourite = async(req, res, next) => {
   catch(err => {
     if (err.response && err.response.status == ApiError.codes.notFound){
       throw ApiError.badRequest(err.response.data.error)
-    }
+    } else { throw err }
   })
   
   const { ownerid, state } = projectResponse.data.data
@@ -86,7 +86,7 @@ exports.addFavourite = async(req, res, next) => {
   //Idem a sponsors, si se llega aca y falla queda un fav fantasma cargado.
   await axios.patch(PROJECTS_URL + '/' + projectid, bodyProjects);
   
-  res.status(200).json(favouritesResponse.data);
+  res.status(201).json(favouritesResponse.data);
 };
   
 exports.getMyFavourites = async(req, res, next) => {
