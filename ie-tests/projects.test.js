@@ -72,14 +72,13 @@ const createProjectWithAssertion = async function (){
   return pid
 }
 
-
 beforeAll(async () => {
   await firebaseLoginUser({
     email: users.entrepreneur.email,
     pass: users.entrepreneur.pass
   });
 });
-
+let pid = -1;
 // Comienzan los tests
 
 describe('POST /projects', function() {
@@ -97,24 +96,13 @@ describe('POST /projects', function() {
   })
 
   it('Authorized response', async (done) => {
-    const token = await getIdToken();
-    testAuthorized(app, 'post', path, token, data)
-    .expect(201)
-    .then(response => {
-      expect(response.body.status).toEqual('success');
-      expect(response.body.data).toEqual(expect.objectContaining(projectCheck))
-      done();
-    })
+    pid =  await createProjectWithAssertion();
+    done();
   });
 });
 
 
 describe('GET /projects/{id}', function() {
-  let pid = -1;
-  beforeAll(async () => {
-    pid = await createProjectWithAssertion();
-  })
-
   it('Authorized response, success', async (done) => {
     const token = await getIdToken();
     const path = `/projects/${pid}`;
@@ -144,11 +132,6 @@ describe('GET /projects/{id}', function() {
 
 
 describe('GET /projects/search', function() {
-  let pid = -1;
-  beforeAll(async () => {
-    pid = await createProjectWithAssertion();
-  })
-
   it('Authorized response, success', async (done) => {
     const token = await getIdToken();
     const uid = await getUid();
@@ -211,11 +194,6 @@ describe('GET users/{uid}/projects', function() {
 
 
 describe('PATCH /projects/{pid}', function() {
-  let pid = -1;
-  beforeAll(async () => {
-    pid = await createProjectWithAssertion();
-  })
-
   it('Authorized response, success', async (done) => {
     const token = await getIdToken();
     const path = `/projects/${pid}`;
@@ -250,10 +228,6 @@ describe('PATCH /projects/{pid}', function() {
   });
 
   it('Authorized response, forbidden', async (done) => {
-    
-    //Creamos un proyecto
-    await createProjectWithAssertion();
-    
     //Cambiamos de usuario logueado
     await firebaseLoginUser({
       email: users.sponsor.email,
