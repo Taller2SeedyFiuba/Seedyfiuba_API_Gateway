@@ -1,8 +1,10 @@
 'use strict'
 
 const axios = require('axios');
+
 const USERS_URL = process.env.USERS_MS;
 const SPONSORS_URL = process.env.SPONSORS_MS;
+const PAYMENT_URL = process.env.PAYMENT_GTW_MS;
 
 exports.me = async(req, res, next) => {
   let reqRes = await axios.get(USERS_URL + '/users/' + req.id);
@@ -16,9 +18,13 @@ exports.me = async(req, res, next) => {
 
 exports.post = async(req, res, next) => {
   const reqRes = await axios.post(USERS_URL + '/users', {
-      id: req.id,
-      ... req.body
-    });
+    id: req.id,
+    ... req.body
+  });
+  
+  await axios.post(PAYMENT_URL + '/wallets', {
+    ownerid: req.id
+  });
 
   res.status(201).json(reqRes.data);
 };
