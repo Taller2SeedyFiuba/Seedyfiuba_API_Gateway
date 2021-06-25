@@ -4,6 +4,7 @@
 const config = {
   verbose: true,
   testPathIgnorePatterns: ["/node_modules/", "/src/"],
+  testTimeout: 20000
 };
 
 module.exports = config;
