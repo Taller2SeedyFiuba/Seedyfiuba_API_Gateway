@@ -64,7 +64,7 @@ exports.update = async(req, res, next) => {
   const auxRes = await axios.get(PROJECTS_URL + '/' + req.params.id);
   const response = auxRes.data
   if (response.data.ownerid != req.id){
-    throw ApiError.notAuthorized("You don't have permissions to update the project")
+    throw ApiError.notAuthorized("edition-permissions")
   }
   const reqRes = await axios.patch(PROJECTS_URL + '/' + req.params.id, req.body);
 

@@ -56,7 +56,7 @@ exports.getMyReviews = async(req, res, next) => {
 
   let sponsorsResponse = await axios.get(SPONSORS_URL + '/viewers/' + req.id);
   if (sponsorsResponse.data.data == false){
-    throw ApiError.notAuthorized("user-is-not-reviewer")
+    throw ApiError.notAuthorized("user-is-not-viewer")
   }
 
   sponsorsResponse = await axios.get(SPONSORS_URL + '/viewers?' + sponsorsQuery);
@@ -74,7 +74,7 @@ exports.getMyReviews = async(req, res, next) => {
 exports.getProjectsOnReview = async(req, res, next) => {
   const sponsorsResponse = await axios.get(SPONSORS_URL + '/viewers/' + req.id);
   if (sponsorsResponse.data.data == false){
-    throw ApiError.notAuthorized("user-is-not-reviewer")
+    throw ApiError.notAuthorized("user-is-not-viewer")
   }
   const query = "state=on_review"
               + "&limit=" + (req.query.limit || 10)

@@ -85,7 +85,7 @@
         }
       }
     },
-    "/users/profile/{id}": {
+    "/users/{id}/profile": {
       "get": {
         "tags": [
           "users"

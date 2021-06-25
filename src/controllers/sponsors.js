@@ -11,13 +11,13 @@ exports.addSponsor = async(req, res, next) => {
   const projectResponse = await axios.get(PROJECTS_URL + '/' + projectid).
   catch(err => {
     if (err.response && err.response.status == ApiError.codes.notFound){
-      throw ApiError.badRequest(err.response.data.error)
+      throw ApiError.badRequest(err.response.data.message)
     } else { throw err }
   })
   
   const { ownerid, state } = projectResponse.data.data
   if (ownerid == req.id) 
-    throw ApiError.badRequest(`You can't sponsor your own project`);
+    throw ApiError.badRequest("owner-cant-sponsor");
   //Por ahora no las tenemos en cuenta
   //if (state != 'funding'){
   //  if (state == 'on_review') throw ApiError.badRequest("Project not found")
@@ -61,13 +61,13 @@ exports.addFavourite = async(req, res, next) => {
   const projectResponse = await axios.get(PROJECTS_URL + '/' + projectid).
   catch(err => {
     if (err.response && err.response.status == ApiError.codes.notFound){
-      throw ApiError.badRequest(err.response.data.error)
+      throw ApiError.badRequest(err.response.data.message)
     } else { throw err }
   })
   
   const { ownerid, state } = projectResponse.data.data
   if (ownerid == req.id) 
-    throw ApiError.badRequest(`You can't add your own project to favourites`);
+    throw ApiError.badRequest("owner-cant-favourite");
   //Por ahora no las tenemos en cuenta
   //if (state != 'funding'){
   //  if (state == 'on_review') throw ApiError.badRequest("Project not found")
