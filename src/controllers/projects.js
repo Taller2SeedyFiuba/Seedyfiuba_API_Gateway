@@ -70,7 +70,7 @@ exports.update = async(req, res, next) => {
 
   res.status(200).json(reqRes.data);
 }
-
+/*  TIENE SENTIDO ELIMINAR UN PROYECTO?
 exports.destroy = async(req, res, next) => {
   const auxRes = await axios.get(PROJECTS_URL + '/' + req.params.id);
   const response = auxRes.data
@@ -81,7 +81,7 @@ exports.destroy = async(req, res, next) => {
 
   res.status(200).json(reqRes.data);
 }
-
+*/
 const getUserProjectsAux = async(req, res, id) => {
   let reqRes;
   let query = ''

@@ -238,7 +238,7 @@ test('/update successful response', async () => {
   expect(res.status).toHaveBeenCalledWith(200);
   expect(res.json).toHaveBeenCalledWith(resObj.data);
 });
-
+/*
 test('/delete successful response', async () => {
 
   const id = 1
@@ -271,5 +271,5 @@ test('/delete successful response', async () => {
   expect(res.status).toHaveBeenCalledWith(200);
   expect(res.json).toHaveBeenCalledWith(resObj.data);
 });
-
+*/
 

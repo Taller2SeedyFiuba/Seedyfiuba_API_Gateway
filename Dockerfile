@@ -9,7 +9,7 @@ RUN npm install
 
 COPY ./src ./src
 
-COPY ./jest-ie.config.js ./jest-ie.config.js
+COPY ./*jest*.js ./
 COPY ./ie-tests ./ie-tests
 
 CMD ["npm", "run", "start"]

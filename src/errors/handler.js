@@ -12,7 +12,7 @@ function msErrorHandler(err, res) {
 
   if (response) {
     console.log(response.data, response.status);
-    return errorResponse(res, response.status, response.data.error)
+    return errorResponse(res, response.status, response.data.message)
   } else if (request) {
     console.log(request);
     return errorResponse(res, ApiError.codes.dependencyError, 'internal-service-req-error')
