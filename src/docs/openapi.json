@@ -12,6 +12,18 @@
     {
       "name": "projects",
       "description": "Everything about projects"
+    },
+    {
+      "name": "sponsors",
+      "description": "Everything about sponsors"
+    },
+    {
+      "name": "viewers",
+      "description": "Everything about viewers"
+    },
+    {
+      "name": "admins",
+      "description": "Everything about admins"
     }
   ],
   "paths": {
@@ -1041,6 +1053,147 @@
           }
         }
       }
+    },
+    "/admin/users": {
+      "get": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "Returns a list with all the users.",
+        "description": "This can only be done by an admin",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of users to retrieve"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page number of users result to retrieve"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FullUser"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Logged user is not an admin"
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/admin/users/{id}": {
+      "get": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "Returns profile information of the user specified by id.",
+        "description": "This can only be done by an admin",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the user to get profile information"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FullUser"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Logged user is not an admin"
+          },
+          "404": {
+            "description": "A user with the specified ID was not found."
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "Promote a user to administrator",
+        "description": "This can only be done by an admin",
+        "operationId": "promoteUser",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the user to promote"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FullUser"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Logged user is not an admin"
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1082,6 +1235,43 @@
           "isviewer": {
             "type": "boolean",
             "example": true
+          }
+        }
+      },
+      "FullUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "05yseyhiEWPNvkYYbdHL77dHKWi1"
+          },
+          "firstname": {
+            "type": "string",
+            "example": "Marcelo"
+          },
+          "lastname": {
+            "type": "string",
+            "example": "Lopez"
+          },
+          "email": {
+            "type": "string",
+            "example": "mlopez@gmail.com"
+          },
+          "birthdate": {
+            "type": "string",
+            "example": "1990-03-04"
+          },
+          "signindate": {
+            "type": "string",
+            "example": "2021-05-12"
+          },
+          "isviewer": {
+            "type": "boolean",
+            "example": true
+          },
+          "isadmin": {
+            "type": "boolean",
+            "example": false
           }
         }
       },
@@ -1268,27 +1458,6 @@
                 "birthdate": {
                   "type": "string",
                   "example": "1990-03-04"
-                }
-              }
-            }
-          }
-        }
-      },
-      "UpdateUserBody": {
-        "description": "A JSON object containing user information",
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "firstname": {
-                  "type": "string",
-                  "example": "Marcelo"
-                },
-                "lastname": {
-                  "type": "string",
-                  "example": "Lopez"
                 }
               }
             }
