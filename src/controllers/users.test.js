@@ -1,10 +1,16 @@
-const USERS_URL = 'https://seedyfiuba-back-users.herokuapp.com/api';
-
 /** Mock Axios */
 const axios = require('axios');
 jest.mock('axios');
 
-const { me, getUser, post, updateMyProfile } = require('./users');
+const {
+  me,
+  getUser,
+  post,
+  updateMyProfile,
+  adminPromoteUser,
+  adminListUsers,
+  adminGetUser
+} = require('./users');
 const { ApiError } = require('../errors/ApiError');
 
 const mockResponse = () => {
@@ -70,7 +76,7 @@ test('/getUser successful response', async () => {
   expect(res.json).toHaveBeenCalledWith(resObj.data);
 });
 
-test('/post successful response', async () => { 
+test('/post successful response', async () => {
   const resObj = {
     data: {
       status: 'success',
@@ -97,34 +103,8 @@ test('/post successful response', async () => {
   expect(res.json).toHaveBeenCalledWith(resObj.data);
 });
 
-test('/post unsuccessful response 400 error code', async () => { 
-  const req = {
-    id: 1,
-    body: {}
-  }
+test('/updateMyProfile successful response', async () => {
 
-  axios.post.mockReturnValue(new Error({
-    response:{
-      data: {
-        status: "error",
-        error: "mock-error"
-      },
-      status: 400
-    }
-  }));
-
-  const res = mockResponse();
-
-  try{
-    await post(req, res);
-  } catch (err) {
-    expect(err).toBeInstanceOf(ApiError);
-    expect(err).toHaveProperty('code', 400);
-  }
-});
-
-test('/updateMyProfile successful response', async () => { 
-  
   const req = {
     id: 1,
     body: {
@@ -132,7 +112,7 @@ test('/updateMyProfile successful response', async () => {
       "lastname": "Garcia"
     }
   }
-  
+
   const resObj = {
     data: {
       status: 'success',
@@ -154,32 +134,113 @@ test('/updateMyProfile successful response', async () => {
   expect(res.json).toHaveBeenCalledWith(resObj.data);
 });
 
-test('/updateMyProfile unsuccessful response 400 error code', async () => { 
+test('/adminPromoteUser successful response', async () => {
+
   const req = {
-    id: 1,
-    body: {
-      "firstname": "Omar",
-      "lastname": "Garcia",
-      "erroneo": "error"
+    id: 'userid1',
+    params: {
+      id: 'userid2'
     }
   }
-  
-  axios.patch.mockReturnValue(new Error({
-    response:{
+
+  const resObj = {
+    data: {
+      status: 'success',
       data: {
-        status: "error",
-        error: "mock-error"
-      },
-      status: 400
+        "id": "userid2",
+        "firstname": "Mockfirstname",
+        "lastname": "Mocklastname",
+        "email": "mlopez@gmail.com",
+        "birthdate": "1990-03-04"
+      }
     }
-  }));
+  };
+
+  axios.patch.mockReturnValue(resObj);
 
   const res = mockResponse();
 
-  try{
-    await updateMyProfile(req, res);
-  } catch (err) {
-    expect(err).toBeInstanceOf(ApiError);
-    expect(err).toHaveProperty('code', 400);
+  await adminPromoteUser(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(200);
+  expect(res.json).toHaveBeenCalledWith(resObj.data);
+});
+
+test('/adminGetUser successful response', async () => {
+  const req = {
+    id: 1,
+    params: { id: 'userid2' }
   }
+  const resObj = {
+    data: {
+      status: 'success',
+      data: {
+        "id": "uhasj31asidasdicaw",
+        "firstname": "Marcelo",
+        "lastname": "Lopez",
+        "email": "mlopez@gmail.com",
+        "birthdate": "1990-03-04",
+        "signindate": "2020-11-10T16:49:52.214Z"
+      }
+    }
+  };
+  const viewObj = {
+    data: {
+      status: 'success',
+      data: true
+    }
+  }
+
+  const expectObj = {
+    status: 'success',
+    data: {
+      ...resObj.data.data,
+      isviewer: viewObj.data.data
+    }
+  }
+
+  axios.get.mockReturnValueOnce(resObj).mockReturnValueOnce(viewObj);
+  const res = mockResponse();
+  await adminGetUser(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(200);
+  expect(res.json).toHaveBeenCalledWith(expectObj);
+});
+
+test('/adminListUsers successful response', async () => {
+  const req = {
+    id: 1,
+    query: {
+      page: 1,
+      limit: 2
+    },
+    originalUrl: ".../admin/users?page=1&limit=2"
+  }
+  const resObj = {
+    data: {
+      status: 'success',
+      data: [
+      {
+        "id": "uhasj31asidasdicaw",
+        "firstname": "Marcelo",
+        "lastname": "Lopez",
+        "email": "mlopez@gmail.com"
+      },
+      {
+        "id": "kdsaoijsaoiwqdsads",
+        "firstname": "Esteban",
+        "lastname": "Quito",
+        "email": "equito@gmail.com"
+      }
+    ]
+    }
+  };
+
+  axios.get.mockReturnValue(resObj);
+
+  const res = mockResponse();
+  await adminListUsers(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(200);
+  expect(res.json).toHaveBeenCalledWith(resObj.data);
 });

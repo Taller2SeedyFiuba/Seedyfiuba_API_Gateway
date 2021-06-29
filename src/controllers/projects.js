@@ -1,7 +1,7 @@
 'use strict'
 
 const axios = require('axios');
-const { pick } = require('../util/util')
+const { pick, getQueryString } = require('../util/util')
 const PROJECTS_URL = process.env.PROJECTS_MS;
 const SPONSORS_URL = process.env.SPONSORS_MS;
 
@@ -26,11 +26,10 @@ const publicAttributes = [
 ]
 
 exports.search = async(req, res, next) => {
-  let reqRes;
-  let query = ''
-  const idx = req.originalUrl.indexOf('?')
-  if (idx != -1) query = req.originalUrl.substring(idx)
-  reqRes = await axios.get(PROJECTS_URL + '/search' + query);
+
+  const query = getQueryString(req.originalUrl)
+  //Aca falta filtrar los proyectos cancelados o en estado on_review
+  const reqRes = await axios.get(PROJECTS_URL + '/search' + query);
 
   res.status(200).json(reqRes.data);
 };
@@ -105,3 +104,25 @@ exports.getUserProjects = async(req, res, next) => {
 exports.getMyProjects = async(req, res, next) => {
   return getUserProjectsAux(req, res, req.id)
 }
+
+exports.adminListProjects = async(req, res, next) => {
+
+  const query = getQueryString(req.originalUrl)
+  const reqRes = await axios.get(PROJECTS_URL + '/search' + query);
+
+  res.status(200).json(reqRes.data);
+};
+
+
+exports.adminGetProject = async(req, res, next) => {
+
+  let reqRes = await axios.get(PROJECTS_URL + '/' + req.params.projectid);
+  const response = reqRes.data
+
+  const query = 'projectid=' + projectid + '&userid=' + req.id
+  reqRes = await axios.get(SPONSORS_URL + '/favourites?' + query);
+
+  response.data.isfavourite = reqRes.data.data.length > 0
+
+  res.status(200).json(response);
+};
