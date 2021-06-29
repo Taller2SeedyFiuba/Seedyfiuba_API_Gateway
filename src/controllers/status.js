@@ -4,6 +4,7 @@ const axios = require('axios');
 const PROJECTS_URL = process.env.PROJECTS_MS;
 const USERS_URL = process.env.USERS_MS;
 const SPONSORS_URL = process.env.SPONSORS_MS;
+const PAYMENTS_URL = process.env.PAYMENT_GTW_MS;
 
 const { ApiError } = require('../errors/ApiError');
 
@@ -21,7 +22,8 @@ const getStatus = async (req, res, next) => {
   const responses = {
     users: "OK",
     projects: "OK",
-    sponsors: "OK"
+    sponsors: "OK",
+    payments: "OK"
   }
 
   await axios.get(USERS_URL + '/status').
@@ -35,6 +37,11 @@ const getStatus = async (req, res, next) => {
   })
 
   await axios.get(SPONSORS_URL + '/status').
+  catch(err => {
+    responses.sponsors = "ERROR"
+  })
+
+  await axios.get(PAYMENTS_URL + '/status').
   catch(err => {
     responses.sponsors = "ERROR"
   })

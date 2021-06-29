@@ -1,14 +1,3 @@
-/*
-const codes = {
-  notAuthorized: 401,
-  badRequest: 400,
-  notFound: 404,
-  dependencyError: 502,
-  dependencyTimout: 504,
-  serverError: 500
-}
-*/
-
 class ApiError {
   constructor(code, message) {
     this.code = code;
