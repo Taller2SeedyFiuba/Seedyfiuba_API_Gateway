@@ -12,6 +12,12 @@ const configJson = process.env.FIREBASE_CLIENT || "{}";
 firebase.initializeApp(JSON.parse(configJson));
 
 const users = {
+  //Quizas el admin se deberia cargar desde un .env
+  root: {
+    email: 'root@seedyfiuba.com',
+    pass: '123456',
+    uid: '3ozxgItXE5cZFGtYMhNAs4dvqSA2'
+  },
   entrepreneur: {
     email: 'entrepreneur@test.com',
     pass: 'Qwe12345',

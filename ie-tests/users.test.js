@@ -55,7 +55,7 @@ describe('GET /users/me', function() {
   it('Unauthorized response', function(done) {
     testUnauthorized(app,'get', path, done);
   });
-  
+
   it('Authorized response', async (done) => {
     const token = await getIdToken();
     testAuthorized(app, 'get', path, token, data)
@@ -99,13 +99,6 @@ describe('GET /users/{id}/profile', function() {
 });
 
 describe('PATCH /users/me', function() {
-  //beforeAll(async () => {
-  //  await firebaseCreateUser({
-  //    ...data,
-  //    pass: 'Qwe12345',
-  //  });
-  //});
-
   const path = '/users/me';
 
   it('Unauthorized response', function(done) {

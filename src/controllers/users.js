@@ -24,7 +24,7 @@ const publicAttributes = [
 
 exports.me = async(req, res, next) => {
   let reqRes = await axios.get(USERS_URL + '/users/' + req.id);
-  const response = reqRes.data 
+  const response = reqRes.data
   response.data = pick(response.data, privateAttributes);
 
   reqRes = await axios.get(SPONSORS_URL + '/viewers/' + req.id)
@@ -38,7 +38,7 @@ exports.post = async(req, res, next) => {
     id: req.id,
     ... req.body
   });
-  
+
   await axios.post(PAYMENT_URL + '/wallets', {
     ownerid: req.id
   });
@@ -70,7 +70,7 @@ exports.adminPromoteUser = async(req, res, next) => {
     isadmin: true
   }
   const reqRes = await axios.patch(USERS_URL + '/users/' + id, body);
-  
+
   res.status(200).json(reqRes.data);
 };
 
@@ -89,5 +89,5 @@ exports.adminGetUser = async(req, res, next) => {
   reqRes = await axios.get(SPONSORS_URL + '/viewers/' + req.params.id)
   response.data.isviewer = reqRes.data.data
 
-  res.status(200).json(response.data);
+  res.status(200).json(response);
 };
