@@ -42,9 +42,6 @@
               }
             }
           },
-          "400": {
-            "description": "The specified user ID is invalid (not a number)."
-          },
           "default": {
             "description": "Unexpected error"
           }
@@ -73,11 +70,39 @@
               }
             }
           },
-          "400": {
-            "description": "The specified user ID is invalid (not a number)."
-          },
           "404": {
             "description": "A user with the specified ID was not found."
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Update user",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "updateUser",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/UpdateUserBody"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
           },
           "default": {
             "description": "Unexpected error"
@@ -1243,6 +1268,27 @@
                 "birthdate": {
                   "type": "string",
                   "example": "1990-03-04"
+                }
+              }
+            }
+          }
+        }
+      },
+      "UpdateUserBody": {
+        "description": "A JSON object containing user information",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "firstname": {
+                  "type": "string",
+                  "example": "Marcelo"
+                },
+                "lastname": {
+                  "type": "string",
+                  "example": "Lopez"
                 }
               }
             }

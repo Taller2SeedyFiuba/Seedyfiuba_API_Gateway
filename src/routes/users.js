@@ -13,6 +13,7 @@ const authServiceWithError = hocError(authService.authorize);
 router.get('/me', authServiceWithError,  hocError(userController.me));
 router.get('/:id/profile', authServiceWithError,  hocError(userController.getUser));
 router.post('/', authServiceWithError, hocError(userController.post));
+router.patch('/me', authServiceWithError, hocError(userController.updateMyProfile));
 
 
 //User's projects
