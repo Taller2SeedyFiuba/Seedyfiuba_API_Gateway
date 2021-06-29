@@ -98,3 +98,17 @@ describe('GET /users/{id}/profile', function() {
     })
   });
 });
+
+describe('GET /users/wallets/mine', function() {
+  const path = '/users/wallets/mine';
+
+  it('Unauthorized response', function(done) {
+    testUnauthorized(app,'get', path, done);
+  });
+
+  it('Authorized response', async (done) => {
+    const token = await getIdToken();
+    testAuthorized(app, 'get', path, token, data)
+    .expect(200, done);
+  });
+});
