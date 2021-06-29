@@ -12,6 +12,18 @@
     {
       "name": "projects",
       "description": "Everything about projects"
+    },
+    {
+      "name": "sponsors",
+      "description": "Everything about sponsors"
+    },
+    {
+      "name": "viewers",
+      "description": "Everything about viewers"
+    },
+    {
+      "name": "admins",
+      "description": "Everything about admins"
     }
   ],
   "paths": {
@@ -42,9 +54,6 @@
               }
             }
           },
-          "400": {
-            "description": "The specified user ID is invalid (not a number)."
-          },
           "default": {
             "description": "Unexpected error"
           }
@@ -73,11 +82,39 @@
               }
             }
           },
-          "400": {
-            "description": "The specified user ID is invalid (not a number)."
-          },
           "404": {
             "description": "A user with the specified ID was not found."
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Update user",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "updateUser",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/UpdateUserBody"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
           },
           "default": {
             "description": "Unexpected error"
@@ -618,6 +655,38 @@
         }
       }
     },
+    "/wallets/mine": {
+      "get": {
+        "tags": [
+          "wallets"
+        ],
+        "summary": "List user wallet",
+        "operationId": "getUserWallet",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Wallet"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
     "/sponsors/mine": {
       "get": {
         "tags": [
@@ -1017,13 +1086,31 @@
         }
       }
     },
-    "/wallets/mine": {
+    "/admin/users": {
       "get": {
         "tags": [
-          "wallets"
+          "admins"
         ],
-        "summary": "List user wallet",
-        "operationId": "getUserWallet",
+        "summary": "Returns a list with all the users.",
+        "description": "This can only be done by an admin",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of users to retrieve"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page number of users result to retrieve"
+          }
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1037,11 +1124,102 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Wallet"
+                    "$ref": "#/components/schemas/FullUser"
                   }
                 }
               }
             }
+          },
+          "403": {
+            "description": "Logged user is not an admin"
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/admin/users/{id}": {
+      "get": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "Returns profile information of the user specified by id.",
+        "description": "This can only be done by an admin",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the user to get profile information"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FullUser"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Logged user is not an admin"
+          },
+          "404": {
+            "description": "A user with the specified ID was not found."
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "Promote a user to administrator",
+        "description": "This can only be done by an admin",
+        "operationId": "promoteUser",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the user to promote"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FullUser"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Logged user is not an admin"
           },
           "default": {
             "description": "Unexpected error"
@@ -1089,6 +1267,43 @@
           "isviewer": {
             "type": "boolean",
             "example": true
+          }
+        }
+      },
+      "FullUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "05yseyhiEWPNvkYYbdHL77dHKWi1"
+          },
+          "firstname": {
+            "type": "string",
+            "example": "Marcelo"
+          },
+          "lastname": {
+            "type": "string",
+            "example": "Lopez"
+          },
+          "email": {
+            "type": "string",
+            "example": "mlopez@gmail.com"
+          },
+          "birthdate": {
+            "type": "string",
+            "example": "1990-03-04"
+          },
+          "signindate": {
+            "type": "string",
+            "example": "2021-05-12"
+          },
+          "isviewer": {
+            "type": "boolean",
+            "example": true
+          },
+          "isadmin": {
+            "type": "boolean",
+            "example": false
           }
         }
       },

@@ -12,15 +12,14 @@ let data = {
   email: faker.internet.email(),
 }
 
+beforeAll(async () => {
+  await firebaseCreateUser({
+    ...data,
+    pass: 'Qwe12345',
+  });
+});
 
 describe('POST /users', function() {
-  beforeAll(async () => {
-    await firebaseCreateUser({
-      ...data,
-      pass: 'Qwe12345',
-    });
-  });
-
   const path = '/users';
 
   it('Unauthorized response', function(done) {
@@ -56,7 +55,7 @@ describe('GET /users/me', function() {
   it('Unauthorized response', function(done) {
     testUnauthorized(app,'get', path, done);
   });
-  
+
   it('Authorized response', async (done) => {
     const token = await getIdToken();
     testAuthorized(app, 'get', path, token, data)
@@ -110,5 +109,46 @@ describe('GET /users/wallets/mine', function() {
     const token = await getIdToken();
     testAuthorized(app, 'get', path, token, data)
     .expect(200, done);
+  });
+});
+
+describe('PATCH /users/me', function() {
+  const path = '/users/me';
+
+  it('Unauthorized response', function(done) {
+    testUnauthorized(app, 'patch', path, done);
+  });
+
+  it('Bad formatted request', async function(done) {
+    const token = await getIdToken();
+    const wrongBody = {
+      'badAttribute': "error"
+    }
+    testAuthorized(app, 'patch', path, token, wrongBody)
+    .expect(400)
+    .then(response => {
+      expect(response.body.status).toEqual('error');
+      expect(response.body.message).toBeDefined();
+      done();
+    })
+  })
+
+  it('Authorized response', async (done) => {
+    const token = await getIdToken();
+    const newData = {
+      'firstname': "NewName",
+      'lastname': "NewLastname"
+    }
+    const expectedData = {
+      ...data,
+      ...newData
+    }
+    testAuthorized(app, 'patch', path, token, newData)
+    .expect(200)
+    .then(response => {
+      expect(response.body.status).toEqual('success');
+      expect(response.body.data).toMatchObject(expectedData);
+      done();
+    })
   });
 });

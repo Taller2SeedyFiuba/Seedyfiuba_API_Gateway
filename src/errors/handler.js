@@ -14,7 +14,7 @@ function msErrorHandler(err, res) {
     console.log(response.data, response.status);
     return errorResponse(res, response.status, response.data.message)
   } else if (request) {
-    console.log(request);
+    //console.log(request);
     return errorResponse(res, ApiError.codes.dependencyError, 'internal-service-req-error')
   } else {                                                    
     console.log('Error', message);

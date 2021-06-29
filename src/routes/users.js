@@ -14,6 +14,8 @@ const authServiceWithError = hocError(authService.authorize);
 //Users
 router.post('/', authServiceWithError, hocError(userController.post));
 router.get('/me', authServiceWithError,  hocError(userController.me));
+router.patch('/me', authServiceWithError, hocError(userController.updateMyProfile));
+
 
 //User's wallet
 router.get('/wallets/mine', authServiceWithError,  hocError(walletController.mine));
