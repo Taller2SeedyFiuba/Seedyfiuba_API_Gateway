@@ -173,13 +173,15 @@ test('/create successful response', async () => {
   const id = 'ownerid'
   const originalBody = {
     'att1': 'data',
-    'att2': 'masData'
+    'att2': 'masData',
+    'stages': [10, 20, 300]
   }
-  const expectedBody = Object.assign({}, originalBody, { 'ownerid': id })
+ 
   const req = {
     id,
     body: originalBody
   }
+
   const resObj = {
     data: {
       status: 'success',
