@@ -44,7 +44,7 @@
           "$ref": "#/components/requestBodies/UserBody"
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "OK",
             "content": {
               "application/json": {
@@ -633,7 +633,7 @@
           "$ref": "#/components/requestBodies/ProjectBody"
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "OK",
             "content": {
               "application/json": {
@@ -825,7 +825,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "OK",
             "content": {
               "application/json": {
@@ -1344,9 +1344,9 @@
               "type": "string"
             },
             "example": [
-              "daoiacpoa12mcahw21hd72ja",
-              "jad892of7632nds81ksd98jd",
-              "cs83a981ishaja8721odasa1"
+              "https://picsum.photos/400/300",
+              "https://picsum.photos/400/300",
+              "https://picsum.photos/400/300"
             ]
           },
           "stages": {
@@ -1429,7 +1429,7 @@
           },
           "icon": {
             "type": "string",
-            "example": "daoiacpoa12mcahw21hd72ja"
+            "example": "https://picsum.photos/400/300"
           }
         }
       }
@@ -1458,6 +1458,27 @@
                 "birthdate": {
                   "type": "string",
                   "example": "1990-03-04"
+                }
+              }
+            }
+          }
+        }
+      },
+      "UpdateUserBody": {
+        "description": "A JSON object containing user information",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "firstname": {
+                  "type": "string",
+                  "example": "Marcelo"
+                },
+                "lastname": {
+                  "type": "string",
+                  "example": "Lopez"
                 }
               }
             }
@@ -1518,9 +1539,9 @@
                     "type": "string"
                   },
                   "example": [
-                    "daoiacpoa12mcahw21hd72ja",
-                    "jad892of7632nds81ksd98jd",
-                    "cs83a981ishaja8721odasa1"
+                    "https://picsum.photos/400/300",
+                    "https://picsum.photos/400/300",
+                    "https://picsum.photos/400/300"
                   ]
                 },
                 "stages": {
