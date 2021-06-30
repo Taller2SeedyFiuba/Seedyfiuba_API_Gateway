@@ -655,6 +655,38 @@
         }
       }
     },
+    "/wallets/mine": {
+      "get": {
+        "tags": [
+          "wallets"
+        ],
+        "summary": "List user wallet",
+        "operationId": "getUserWallet",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Wallet"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
     "/sponsors/mine": {
       "get": {
         "tags": [
@@ -1430,6 +1462,28 @@
           "icon": {
             "type": "string",
             "example": "daoiacpoa12mcahw21hd72ja"
+          }
+        }
+      },
+      "Wallet": {
+        "type": "object",
+        "properties": {
+          "ownerid": {
+            "type": "string",
+            "example": "05yseyhiEWPNvkYYbdHL77dHKWi1"
+          },
+          "address": {
+            "type": "string",
+            "example": "0x7Ab685de2aD2506dBE722934834e3C4800D3c8E4"
+          },
+          "creationdate": {
+            "type": "string",
+            "example": "2021-03-14"
+          },
+          "balance": {
+            "type": "string",
+            "description": "Balance en ethers",
+            "example": "0.0023"
           }
         }
       }

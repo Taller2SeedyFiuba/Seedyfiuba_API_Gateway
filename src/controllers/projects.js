@@ -3,14 +3,15 @@
 const axios = require('axios');
 const { pick, getQueryString } = require('../util/util')
 const PROJECTS_URL = process.env.PROJECTS_MS;
+const PAYMENTS_URL = process.env.PAYMENT_GTW_MS;
 const SPONSORS_URL = process.env.SPONSORS_MS;
 
 const { ApiError } = require('../errors/ApiError');
 
-const publicAttributes = [  
+const publicAttributes = [
   'ownerid',
   'id',
-  'title', 
+  'title',
   'description',
   'type',
   'state',
@@ -51,10 +52,19 @@ exports.view = async(req, res, next) => {
 };
 
 exports.create = async(req, res, next) => {
+
   const reqRes = await axios.post(PROJECTS_URL, {
-      ownerid: req.id,
-      ... req.body
-    });
+    ownerid: req.id,
+    ... req.body
+  });
+
+  const stages = req.body.stages.map((data) => data.amount);
+
+  await axios.post(PAYMENTS_URL + '/projects', {
+    ownerid: req.id,
+    projectid: reqRes.data.data.id,
+    stages,
+  });
 
   res.status(201).json(reqRes.data);
 }
