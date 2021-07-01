@@ -20,7 +20,7 @@ const publicAttributes = [
   'location',
   'tags',
   'multimedia',
-  'fundingamount',
+  'fundedamount',
   'totalamount',
   'sponsorscount',
   'favouritescount'
@@ -101,7 +101,7 @@ const getUserProjectsAux = async(req, res, id) => {
   }else{
     query = query.concat('?ownerid=' + id)
   }
-  
+
   reqRes = await axios.get(PROJECTS_URL + '/search' + query);
 
   return res.status(200).json(reqRes.data);

@@ -1,5 +1,6 @@
 const request = require('supertest');
 const { start } = require('../src/app');
+const { randomEmail } = require('./utils/utils')
 const faker = require('faker');
 const { getIdToken, firebaseCreateUser, getUid } = require('./utils/firebase.config');
 const { testUnauthorized, testAuthorized } = require('./utils/auth');
@@ -9,7 +10,7 @@ let data = {
   firstname: faker.name.firstName(),
   lastname: faker.name.lastName(),
   birthdate: '1990-03-04',
-  email: faker.internet.email(),
+  email: randomEmail()
 }
 
 beforeAll(async () => {
