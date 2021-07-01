@@ -2,12 +2,21 @@
   "openapi": "3.0.0",
   "info": {
     "version": "1.0.0",
-    "title": "SeedyFiuba API Gateway"
+    "title": "SeedyFiuba API Gateway",
+    "description": "API documentation for SeedyFiuba's API Gateway",
+    "contact": {
+      "name": "SeedyFiuba",
+      "url": "https://github.com/Taller2SeedyFiuba"
+    }
   },
   "tags": [
     {
       "name": "users",
       "description": "Everything about users"
+    },
+    {
+      "name": "wallets",
+      "description": "Everything about wallets"
     },
     {
       "name": "projects",
@@ -160,6 +169,38 @@
           },
           "404": {
             "description": "A user with the specified ID was not found."
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/users/wallets/mine": {
+      "get": {
+        "tags": [
+          "wallets"
+        ],
+        "summary": "List user wallet",
+        "operationId": "getUserWallet",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Wallet"
+                  }
+                }
+              }
+            }
           },
           "default": {
             "description": "Unexpected error"
@@ -655,38 +696,6 @@
         }
       }
     },
-    "/wallets/mine": {
-      "get": {
-        "tags": [
-          "wallets"
-        ],
-        "summary": "List user wallet",
-        "operationId": "getUserWallet",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Wallet"
-                  }
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Unexpected error"
-          }
-        }
-      }
-    },
     "/sponsors/mine": {
       "get": {
         "tags": [
@@ -755,6 +764,24 @@
             "description": "ID of the project to sponsor"
           }
         ],
+        "requestBody": {
+          "description": "A JSON object containing funding amount",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "type": "integer",
+                    "description": "Amount to provide",
+                    "example": 20
+                  }
+                }
+              }
+            }
+          }
+        },
         "security": [
           {
             "bearerAuth": []
@@ -768,7 +795,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ResumeProject"
+                    "$ref": "#/components/schemas/ProjectSponsor"
                   }
                 }
               }
@@ -1462,6 +1489,23 @@
           "icon": {
             "type": "string",
             "example": "https://picsum.photos/400/300"
+          }
+        }
+      },
+      "ProjectSponsor": {
+        "type": "object",
+        "properties": {
+          "userid": {
+            "type": "string",
+            "example": "05yseyhiEWPNvkYYbdHL77dHKWi1"
+          },
+          "projectid": {
+            "type": "integer",
+            "example": 5
+          },
+          "amount": {
+            "type": "integer",
+            "example": 18
           }
         }
       },

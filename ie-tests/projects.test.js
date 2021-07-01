@@ -1,10 +1,10 @@
 const request = require('supertest');
 const { start } = require('../src/app');
 const faker = require('faker');
-const { 
+const {
   getIdToken,
-  firebaseLoginUser, 
-  getUid, 
+  firebaseLoginUser,
+  getUid,
   users } = require('./utils/firebase.config');
 const { testAuthorized } = require('./utils/auth');
 const app = start();
@@ -24,9 +24,9 @@ const data = {
     "ChacoVive"
   ],
   "multimedia": [
-    "daoiacpoa12mcahw21hd72ja",
-    "jad892of7632nds81ksd98jd",
-    "cs83a981ishaja8721odasa1"
+    "https://picsum.photos/400/300",
+    "https://picsum.photos/400/300",
+    "https://picsum.photos/400/300"
   ],
   "stages": [
     {
@@ -83,7 +83,7 @@ let pid = -1;
 
 describe('POST /projects', function() {
   const path = '/projects';
-  
+
   it('Bad formatted request', async function(done) {
     const token = await getIdToken();
     testAuthorized(app, 'post', path, token, {})
@@ -114,7 +114,7 @@ describe('GET /projects/{id}', function() {
       done();
     })
   });
-  
+
   it('Authorized response, not found', async (done) => {
     const token = await getIdToken();
     const pid = 1e8
@@ -143,7 +143,7 @@ describe('GET /projects/search', function() {
       expect(response.body.data).toMatchObject([projectResumeCheck])
       done();
     })
-  }); 
+  });
 
   it('Authorized response, bad request', async (done) => {
     const token = await getIdToken();
@@ -172,7 +172,7 @@ describe('GET /projects/mine', function() {
       expect(response.body.data).toBeDefined()
       done();
     })
-  }); 
+  });
 });
 
 
@@ -189,7 +189,7 @@ describe('GET users/{uid}/projects', function() {
       expect(response.body.data).toBeDefined()
       done();
     })
-  }); 
+  });
 });
 
 
@@ -210,7 +210,7 @@ describe('PATCH /projects/{pid}', function() {
       })
       done();
     })
-  }); 
+  });
 
   it('Authorized response, bad request', async (done) => {
     const token = await getIdToken();
@@ -233,7 +233,7 @@ describe('PATCH /projects/{pid}', function() {
       email: users.sponsor.email,
       pass: users.sponsor.pass
     });
-    
+
     //Comenzamos el test
     const token = await getIdToken();
     const path = `/projects/${pid}`;
