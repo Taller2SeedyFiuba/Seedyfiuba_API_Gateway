@@ -4,7 +4,7 @@
 const config = {
   verbose: true,
   testPathIgnorePatterns: ["/node_modules/", "/src/"],
-  testTimeout: 20000
+  testTimeout: 100000
 };
 
 module.exports = config;

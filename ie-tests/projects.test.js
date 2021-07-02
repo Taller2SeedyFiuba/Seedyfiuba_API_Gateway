@@ -7,40 +7,10 @@ const {
   getUid,
   users } = require('./utils/firebase.config');
 const { testAuthorized } = require('./utils/auth');
+const { getFakeProject } = require('./utils/utils')
 const app = start();
 
-const data = {
-  "title": "un titulo random",
-  "description": "una descripcion random",
-  "type": "arte",
-  "location": {
-    "description": "Chaco, Argentina",
-    "lat": 120,
-    "lng": 40
-  },
-  "tags": [
-    "ArbolesParaChaco",
-    "ChacoVerde",
-    "ChacoVive"
-  ],
-  "multimedia": [
-    "https://picsum.photos/400/300",
-    "https://picsum.photos/400/300",
-    "https://picsum.photos/400/300"
-  ],
-  "stages": [
-    {
-      "title": "Arboles en el sur",
-      "description": "Se plantaran 5000 arboles en el sur de Chaco",
-      "amount": 2000
-    },
-    {
-      "title": "Arboles en el norte",
-      "description": "Se plantaran 5000 arboles en el norte de Chaco",
-      "amount": 3000
-    }
-  ]
-}
+const data = getFakeProject();
 
 const projectCheck = {
   title: data.title,
@@ -73,10 +43,7 @@ const createProjectWithAssertion = async function (){
 }
 
 beforeAll(async () => {
-  await firebaseLoginUser({
-    email: users.entrepreneur.email,
-    pass: users.entrepreneur.pass
-  });
+  await firebaseLoginUser(users.entrepreneur);
 });
 let pid = -1;
 // Comienzan los tests

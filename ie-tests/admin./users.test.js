@@ -6,7 +6,8 @@ const {
   firebaseCreateUser,
   firebaseLoginUser,
   getUid,
-  users } = require('../utils/firebase.config');
+  users,
+  loginUser} = require('../utils/firebase.config');
 const { testUnauthorized, testAuthorized } = require('../utils/auth');
 const app = start();
 
@@ -17,11 +18,13 @@ const normalUserData = {
   email: faker.internet.email()
 }
 
+users.normalUser = {
+  email: normalUserData.email,
+  pass: 'Qwe12345'
+}
+
 beforeAll(async () => {
-  await firebaseCreateUser({
-    email: normalUserData.email,
-    pass: 'Qwe12345'
-  });
+  await firebaseCreateUser(users.normalUser);
   const token = await getIdToken();
   const path = '/users'
   return testAuthorized(app, 'post', path, token, normalUserData)
@@ -33,27 +36,11 @@ beforeAll(async () => {
 });
 
 const logAdmin = async () => {
-  await firebaseLoginUser({
-    email: users.root.email,
-    pass: users.root.pass
-  });
-
-  const result = {
-    token: await getIdToken(),
-    uid: await getUid()
-  }
-  return result
+  return loginUser(users.root)
 }
+
 const logNormalUser = async () => {
-  await firebaseLoginUser({
-    email: normalUserData.email,
-    pass: 'Qwe12345'
-  });
-  const result = {
-    token: await getIdToken(),
-    uid: await getUid()
-  }
-  return result
+  return loginUser(users.normalUser)
 }
 
 describe('GET /admin/users', function() {
@@ -196,3 +183,4 @@ describe('PATCH /admin/user/{id}', function() {
     })
   });
 });
+

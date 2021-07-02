@@ -3,7 +3,7 @@ const PORT = process.env.PORT || 8080;
 
 function main() {
   let app;
-  
+
   try {
     app = start();
   } catch (err) {
