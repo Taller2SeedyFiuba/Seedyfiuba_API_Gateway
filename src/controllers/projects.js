@@ -60,11 +60,12 @@ exports.create = async(req, res, next) => {
 
   const stages = req.body.stages.map((data) => data.amount);
 
-  await axios.post(PAYMENTS_URL + '/projects', {
-    ownerid: req.id,
-    projectid: reqRes.data.data.id,
-    stages,
-  });
+  //TODO: Volver a acoplar el servicio de payments.
+  //await axios.post(PAYMENTS_URL + '/projects', {
+  //  ownerid: req.id,
+  //  projectid: reqRes.data.data.id,
+  //  stages,
+  //});
 
   res.status(201).json(reqRes.data);
 }
@@ -79,18 +80,7 @@ exports.update = async(req, res, next) => {
 
   res.status(200).json(reqRes.data);
 }
-/*  TIENE SENTIDO ELIMINAR UN PROYECTO?
-exports.destroy = async(req, res, next) => {
-  const auxRes = await axios.get(PROJECTS_URL + '/' + req.params.id);
-  const response = auxRes.data
-  if (response.data.ownerid != req.id){
-    throw ApiError.notAuthorized("You don't have permissions to delete the project")
-  }
-  const reqRes = await axios.delete(PROJECTS_URL + '/' + req.params.id);
 
-  res.status(200).json(reqRes.data);
-}
-*/
 const getUserProjectsAux = async(req, res, id) => {
   let reqRes;
   let query = ''
