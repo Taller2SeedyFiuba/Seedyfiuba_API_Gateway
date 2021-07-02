@@ -7,7 +7,7 @@
     "dev": "nodemon --inspect=0.0.0.0:8000 src/index.js",
     "start": "node src/index.js",
     "test": "jest --collectCoverage --config jest-unit.config.js",
-    "test-ie": "jest --collectCoverage --detectOpenHandles --config jest-ie.config.js"
+    "test-ie": "jest --collectCoverage --config jest-ie.config.js"
   },
   "repository": {
     "type": "git",

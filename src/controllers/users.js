@@ -40,9 +40,9 @@ exports.post = async(req, res, next) => {
     ... req.body
   });
 
-  await axios.post(PAYMENT_URL + '/wallets', {
-    ownerid: req.id
-  });
+  //await axios.post(PAYMENT_URL + '/wallets', {
+  //  ownerid: req.id
+  //});
   //Devolver info de la wallet?
   const response = reqRes.data
   response.data = pick(response.data, privateAttributes);
