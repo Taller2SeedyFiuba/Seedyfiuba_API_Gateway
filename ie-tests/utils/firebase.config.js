@@ -12,7 +12,6 @@ const configJson = process.env.FIREBASE_CLIENT || "{}";
 firebase.initializeApp(JSON.parse(configJson));
 
 const users = {
-  //Quizas el admin se deberia cargar desde un .env
   root: {
     email: 'root@seedyfiuba.com',
     pass: '123456',
@@ -51,10 +50,19 @@ const getUid = async () => {
   return user.uid;
 }
 
+const loginUser = async (user) => {
+  const credentials = await firebaseLoginUser(user)
+  return {
+    token: await credentials.getIdToken(/* forceRefresh */ true),
+    uid: await getUid()
+  }
+}
+
 module.exports = {
   users,
   firebaseLoginUser,
   firebaseCreateUser,
   getIdToken,
   getUid,
+  loginUser
 }

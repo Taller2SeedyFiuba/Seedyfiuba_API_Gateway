@@ -7,6 +7,7 @@ const SPONSORS_URL = process.env.SPONSORS_MS;
 const PAYMENT_URL = process.env.PAYMENT_GTW_MS;
 
 const privateAttributes = [
+  'id',
   'firstname',
   'lastname',
   'email',
