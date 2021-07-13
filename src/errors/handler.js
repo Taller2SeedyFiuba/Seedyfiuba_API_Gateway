@@ -1,5 +1,5 @@
 const { ApiError } = require("./ApiError");
-const { logError, logWarn } = require('../util/log')
+const { logError, logWarn } = require('../utils/log')
 const errMsg = require("./messages")
 
 function logErrorByCode(code, message){

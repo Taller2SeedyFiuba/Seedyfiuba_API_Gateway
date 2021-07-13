@@ -3,6 +3,7 @@ const path = require('path');
 const json = require('express').json;
 const morgan = require('morgan');
 const cors = require('cors');
+const { log } = require('./config')
 
 //Importamos rutas/endpoints
 const startRoutes = require("./routes");
@@ -16,7 +17,17 @@ function createApp(){
     const app = express();
 
     //Middlewares
-    app.use(morgan('dev')); //Escupir a archivo con una ip y timestamp.
+    if(log.info){
+      app.use(morgan(function (tokens, req, res) {
+        return [
+          'Info:',
+          tokens.method(req, res),
+          tokens.url(req, res), '-',
+          tokens.status(req, res), '-',
+          tokens['response-time'](req, res), 'ms'
+        ].join(' ')
+      }));
+    }
     app.use(json());
     app.use(cors());
 

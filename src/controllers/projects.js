@@ -1,7 +1,7 @@
 'use strict'
 
 const axios = require('axios');
-const { pick, getQueryString } = require('../util/util')
+const { pick, getQueryString } = require('../utils/util')
 const PROJECTS_URL = process.env.PROJECTS_MS;
 const PAYMENTS_URL = process.env.PAYMENT_GTW_MS;
 const SPONSORS_URL = process.env.SPONSORS_MS;
