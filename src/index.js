@@ -1,22 +1,19 @@
-const { start } = require("./app");
-const PORT = process.env.PORT || 8080;
-
-function main() {
-  let app;
-
-  try {
-    app = start();
-  } catch (err) {
-    console.log(err);
-    process.exit();
-  }
+const { createApp } = require("./app");
+const { port, env } = require('./config')
+const { logError, logDebug }  = require('./utils/log')
 
 
-  app.listen(PORT, () => {
-    console.log(`Servidor escuchando en: http://localhost:${PORT}`);
-    console.log('ENV: ', process.env.ENV);
+const main = async function(){
+  const app = createApp();
+
+  app.listen(port, () => {
+    logDebug(`Servidor escuchando en http://localhost:${port}`);
+    logDebug(`Corriendo en modo: ${env}`);
   });
 }
 
 main()
+  .catch(err => {
+    logError(err.message)
+  });
 

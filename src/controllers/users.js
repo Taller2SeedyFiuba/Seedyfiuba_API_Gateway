@@ -16,6 +16,7 @@ const privateAttributes = [
 ]
 
 const publicAttributes = [
+  'id',
   'firstname',
   'lastname',
   'email',

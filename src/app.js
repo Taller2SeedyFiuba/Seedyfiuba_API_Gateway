@@ -10,7 +10,7 @@ const startRoutes = require("./routes");
 //Importamos handlers de error
 const { notDefinedHandler, errorHandler} = require("./errors/handler");
 
-function start(){
+function createApp(){
 
     //Iniciamos la aplicacion
     const app = express();
@@ -29,4 +29,4 @@ function start(){
     return app;
 }
 
-module.exports = { start };
+module.exports = { createApp };

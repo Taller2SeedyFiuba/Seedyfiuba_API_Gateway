@@ -7,6 +7,8 @@ const PAYMENTS_URL = process.env.PAYMENT_GTW_MS;
 const SPONSORS_URL = process.env.SPONSORS_MS;
 
 const { ApiError } = require('../errors/ApiError');
+const errMsg = require('../errors/messages')
+
 
 const publicAttributes = [
   'ownerid',
@@ -74,7 +76,7 @@ exports.update = async(req, res, next) => {
   const auxRes = await axios.get(PROJECTS_URL + '/' + req.params.id);
   const response = auxRes.data
   if (response.data.ownerid != req.id){
-    throw ApiError.notAuthorized("edition-permissions")
+    throw ApiError.notAuthorized(errMsg.EDIT_PROJECT_PERMISSIONS)
   }
   const reqRes = await axios.patch(PROJECTS_URL + '/' + req.params.id, req.body);
 

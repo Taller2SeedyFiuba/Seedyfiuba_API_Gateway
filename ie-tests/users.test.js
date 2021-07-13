@@ -1,10 +1,10 @@
 const request = require('supertest');
-const { start } = require('../src/app');
+const { createApp } = require('../src/app');
 const { randomEmail } = require('./utils/utils')
 const faker = require('faker');
 const { getIdToken, firebaseCreateUser, getUid } = require('./utils/firebase.config');
 const { testUnauthorized, testAuthorized } = require('./utils/auth');
-const app = start();
+const app = createApp();
 
 let data = {
   firstname: faker.name.firstName(),
