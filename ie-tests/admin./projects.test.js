@@ -1,4 +1,4 @@
-const { start } = require('../../src/app');
+const { createApp } = require('../../src/app');
 const faker = require('faker');
 const {
   getIdToken,
@@ -9,7 +9,7 @@ const {
   users } = require('../utils/firebase.config');
 const { testUnauthorized, testAuthorized } = require('../utils/auth');
 const { getFakeProject } = require('../utils/utils')
-const app = start();
+const app = createApp();
 
 const data = getFakeProject();
 

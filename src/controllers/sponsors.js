@@ -5,6 +5,7 @@ const SPONSORS_URL = process.env.SPONSORS_MS;
 const PROJECTS_URL = process.env.PROJECTS_MS
 
 const { ApiError } = require('../errors/ApiError');
+const errMsg = require('../errors/messages')
 
 exports.addSponsor = async(req, res, next) => {
   const { projectid } = req.params
@@ -19,11 +20,11 @@ exports.addSponsor = async(req, res, next) => {
 
   const { ownerid, state } = projectResponse.data.data
   if (ownerid == req.id)
-    throw ApiError.badRequest("owner-cant-sponsor");
+    throw ApiError.badRequest(errMsg.OWNER_CANT_SPONSOR);
   //Chequeo de estado, por ahora no lo tenemos en cuenta
   //if (state != 'funding'){
-  //  if (state == 'on_review') throw ApiError.badRequest("Project not found")
-  //  throw ApiError.badRequest("Project is not in funding state")
+  //  if (state == 'on_review') throw ApiError.badRequest(errMsg.PROJECT_NOT_FOUND)
+  //  throw ApiError.badRequest(errMsg.PROJECT_NOT_ON_FUNDING)
   //}
 
   //Aca deberia ir el llamado al endpoint de payments el cual va a recibir un amount a aportar.
@@ -83,11 +84,11 @@ exports.addFavourite = async(req, res, next) => {
 
   const { ownerid, state } = projectResponse.data.data
   if (ownerid == req.id)
-    throw ApiError.badRequest("owner-cant-favourite");
+    throw ApiError.badRequest(errMsg.OWNER_CANT_FAVOURITE);
   //Por ahora no las tenemos en cuenta
   //if (state != 'funding'){
-  //  if (state == 'on_review') throw ApiError.badRequest("Project not found")
-  //  throw ApiError.badRequest("Project is not in funding state")
+  //  if (state == 'on_review') throw ApiError.badRequest(errMsg.PROJECT_NOT_FOUND)
+  //  throw ApiError.badRequest(errMsg.PROJECT_NOT_ON_FUNDING)
   //}
 
   const bodyFavourites = {
