@@ -33,12 +33,12 @@ const getFakeProject = function(){
       {
         "title": faker.commerce.department(),
         "description": faker.company.catchPhrase(),
-        "amount": Number(faker.commerce.price())
+        "amount": Math.random().toFixed(2)
       },
       {
         "title": faker.commerce.department(),
         "description": faker.company.catchPhrase(),
-        "amount": Number(faker.commerce.price())
+        "amount": Math.random().toFixed(2)
       },
     ]
   }
