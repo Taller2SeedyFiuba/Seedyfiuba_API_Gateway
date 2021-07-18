@@ -11,10 +11,9 @@ services:
       ports:
         - 8081:8081
       networks:
-        - default
+        - my-net
       command: npm run dev
-      
 networks:
-    default:
-        external: true
-        name: my-net
+  my-net:
+    external:
+      name: my-net
