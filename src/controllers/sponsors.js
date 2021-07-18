@@ -3,6 +3,7 @@
 const axios = require('axios');
 const SPONSORS_URL = process.env.SPONSORS_MS;
 const PROJECTS_URL = process.env.PROJECTS_MS
+const PAYMENTS_URL = process.env.PAYMENT_GTW_MS;
 
 const { ApiError } = require('../errors/ApiError');
 const errMsg = require('../errors/messages')
@@ -21,14 +22,17 @@ exports.addSponsor = async(req, res, next) => {
   const { ownerid, state } = projectResponse.data.data
   if (ownerid == req.id)
     throw ApiError.badRequest(errMsg.OWNER_CANT_SPONSOR);
+
   //Chequeo de estado, por ahora no lo tenemos en cuenta
-  //if (state != 'funding'){
-  //  if (state == 'on_review') throw ApiError.badRequest(errMsg.PROJECT_NOT_FOUND)
-  //  throw ApiError.badRequest(errMsg.PROJECT_NOT_ON_FUNDING)
-  //}
+  if (state != 'funding'){
+    throw ApiError.badRequest(errMsg.PROJECT_NOT_ON_FUNDING)
+  }
 
   //Aca deberia ir el llamado al endpoint de payments el cual va a recibir un amount a aportar.
-
+  const resp = await axios.post(PAYMENTS_URL + '/projects/' + projectid + '/transactions', {
+    ownerid: req.id,
+    amount, 
+  });
 
 
   //Necesitamos como respuesta de la llamada la cantidad de dinero que efectivamente se aporto
@@ -38,10 +42,10 @@ exports.addSponsor = async(req, res, next) => {
     projectid
   }
   const sponsorsResponse = await axios.post(SPONSORS_URL + '/sponsors', bodySponsors);
-
   const bodyProjects = {
     sponsorscount: sponsorsResponse.data.data.newsponsor ? 1 : undefined,
-    fundedamount: amount
+    fundedamount: resp.data.data.missingAmount,
+    state: resp.data.data.state,
   }
   //Si esto de aca llega a fallar queda un sponsor fantasma cargado en el servicio de sponsors
   await axios.patch(PROJECTS_URL + '/' + projectid, bodyProjects);
@@ -51,7 +55,7 @@ exports.addSponsor = async(req, res, next) => {
     data: {
       userid: req.id,
       projectid,
-      amount
+      amount: resp.data.data.amount
     }
   });
 };

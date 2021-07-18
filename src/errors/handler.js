@@ -19,7 +19,6 @@ function errorResponse(res, status, error){
 
 function msErrorHandler(err, res) {
   const { response, request, message } = err;
-
   if (response) {
     logErrorByCode(response.status, response.data);
     return errorResponse(res, response.status, response.data.message)

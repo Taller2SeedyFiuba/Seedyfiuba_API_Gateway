@@ -62,12 +62,11 @@ exports.create = async(req, res, next) => {
 
   const stages = req.body.stages.map((data) => data.amount);
 
-  //TODO: Volver a acoplar el servicio de payments.
-  //await axios.post(PAYMENTS_URL + '/projects', {
-  //  ownerid: req.id,
-  //  projectid: reqRes.data.data.id,
-  //  stages,
-  //});
+  await axios.post(PAYMENTS_URL + '/projects', {
+   ownerid: req.id,
+   projectid: reqRes.data.data.id,
+   stages,
+  });
 
   res.status(201).json(reqRes.data);
 }

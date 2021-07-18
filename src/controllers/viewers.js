@@ -3,6 +3,8 @@
 const axios = require('axios');
 const SPONSORS_URL = process.env.SPONSORS_MS;
 const PROJECTS_URL = process.env.PROJECTS_MS
+const PAYMENT_URL = process.env.PAYMENT_GTW_MS;
+
 
 const { ApiError } = require('../errors/ApiError');
 const errMsg = require('../errors/messages')
@@ -19,14 +21,18 @@ exports.subscribeToViewing = async(req, res, next) => {
 };
 
 exports.addProject = async(req, res, next) => {
-  const { projectid } = req.params
-  const projectResponse = await axios.get(PROJECTS_URL + '/' + projectid).
-  catch(err => {
+  const { projectid } = req.params;
+  let projectResponse;
+  try {
+    projectResponse = await axios.get(PROJECTS_URL + '/' + projectid)
+
+  } catch (err) {
     if (err.response && err.response.status == ApiError.codes.notFound){
       throw ApiError.badRequest(err.response.data.error)
     } else { throw err }
-  })
-  const project = projectResponse.data.data
+  }
+
+  const project = projectResponse.data.data;
   if (project.state != 'on_review'){
     throw ApiError.badRequest(errMsg.PROJECT_NOT_ON_REVIEW)
   }
@@ -36,16 +42,22 @@ exports.addProject = async(req, res, next) => {
     throw ApiError.badRequest(errMsg.OWNER_CANT_REVIEW);
   }
 
-  //Por ahora no las tenemos en cuenta
-  //if (state != 'funding'){
-  //  if (state == 'on_review') throw ApiError.badRequest(errMsg.PROJECT_NOT_FOUND)
-  //  throw ApiError.badRequest(errMsg.PROJECT_NOT_ON_FUNDING)
-  //}
-
   const bodyFavourites = {
     projectid
   }
+  const resp = await axios.post(PAYMENT_URL + '/projects/' + projectid + '/viewers', {
+    ownerid: req.id,
+  });
+
   const sponsorsResponse = await axios.post(SPONSORS_URL + '/viewers/' + req.id + '/projects', bodyFavourites);
+
+  /** If project reaches 3 reviewers we change the state */
+  const projectData = resp.data.data;
+  if (projectData.state === 'funding') {
+    await axios.patch(PROJECTS_URL + '/' + projectid, {
+      state: 'funding'
+    });
+  }
 
   res.status(201).json(sponsorsResponse.data);
 };
