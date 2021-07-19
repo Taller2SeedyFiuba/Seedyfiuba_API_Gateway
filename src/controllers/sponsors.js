@@ -31,7 +31,7 @@ exports.addSponsor = async(req, res, next) => {
   //Aca deberia ir el llamado al endpoint de payments el cual va a recibir un amount a aportar.
   const resp = await axios.post(PAYMENTS_URL + '/projects/' + projectid + '/transactions', {
     ownerid: req.id,
-    amount, 
+    amount,
   });
 
 
@@ -44,7 +44,7 @@ exports.addSponsor = async(req, res, next) => {
   const sponsorsResponse = await axios.post(SPONSORS_URL + '/sponsors', bodySponsors);
   const bodyProjects = {
     sponsorscount: sponsorsResponse.data.data.newsponsor ? 1 : undefined,
-    fundedamount: resp.data.data.missingAmount,
+    missingamount: resp.data.data.missingAmount,
     state: resp.data.data.state,
   }
   //Si esto de aca llega a fallar queda un sponsor fantasma cargado en el servicio de sponsors
@@ -74,7 +74,7 @@ exports.getMySponsors = async(req, res, next) => {
 
   const projectsResponse = await axios.get(PROJECTS_URL + '/search?' + projectsQuery);
 
-  res.status(200).json(projectsResponse.data);
+  return res.status(200).json(projectsResponse.data);
 };
 
 exports.addFavourite = async(req, res, next) => {
@@ -107,7 +107,7 @@ exports.addFavourite = async(req, res, next) => {
   //Idem a sponsors, si se llega aca y falla queda un fav fantasma cargado.
   await axios.patch(PROJECTS_URL + '/' + projectid, bodyProjects);
 
-  res.status(201).json(favouritesResponse.data);
+  return res.status(201).json(favouritesResponse.data);
 };
 
 exports.getMyFavourites = async(req, res, next) => {
@@ -117,11 +117,11 @@ exports.getMyFavourites = async(req, res, next) => {
 
   const sponsorsResponse = await axios.get(SPONSORS_URL + '/favourites?' + sponsorsQuery);
   if (sponsorsResponse.data.data.length == 0)
-    res.status(200).json(sponsorsResponse.data);
+    return res.status(200).json(sponsorsResponse.data);
 
   let projectsQuery = sponsorsResponse.data.data.map(elem => { return 'id='+elem.projectid }).join('&')
   projectsQuery += "&limit=" + (req.query.limit || 10)  + "&page=1"
   const projectsResponse = await axios.get(PROJECTS_URL + '/search?' + projectsQuery);
 
-  res.status(200).json(projectsResponse.data);
+  return res.status(200).json(projectsResponse.data);
 };

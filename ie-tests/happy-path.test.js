@@ -32,7 +32,7 @@ const createProjectWithAssertion = async function (){
     pid = response.body.data.id;
     return pid
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
   }
 }
 
@@ -140,9 +140,128 @@ describe('Correct Flow', function() {
     .then(response => {
       expect(response.body.status).toEqual('success');
       expect(response.body.data).toMatchObject(expect.objectContaining({
-        state: 'in_progress'
+        state: 'in_progress',
+        actualstage: 0
       }))
       done();
     })
   });
+
+  it('Then project gets seer1 vote', async (done) => {
+    const path = `/projects/${pid}/vote`;
+    await firebaseLoginUser(users.seer1);
+    const token = await getIdToken();
+    testAuthorized(app, 'post', path, token, { 'stage': 0 })
+    .expect(201)
+    .then(response => {
+      expect(response.body.status).toEqual('success');
+      done();
+    })
+  });
+
+  it('Then project gets seer2 vote', async (done) => {
+    const path = `/projects/${pid}/vote`;
+    await firebaseLoginUser(users.seer2);
+    const token = await getIdToken();
+    testAuthorized(app, 'post', path, token, { 'stage': 0 })
+    .expect(201)
+    .then(response => {
+      expect(response.body.status).toEqual('success');
+      done();
+    })
+  });
+
+  it('Seer2 and Seer3 votes do not change project state nor stage, one left', async (done) => {
+    const token = await getIdToken();
+    const path = `/projects/${pid}`;
+    testAuthorized(app, 'get', path, token)
+    .expect(200)
+    .then(response => {
+      expect(response.body.status).toEqual('success');
+      expect(response.body.data).toMatchObject(expect.objectContaining({
+        state: 'in_progress',
+        actualstage: 0
+      }))
+      done();
+    })
+  });
+
+  it('Then project gets seer3 vote', async (done) => {
+    const path = `/projects/${pid}/vote`;
+    await firebaseLoginUser(users.seer3);
+    const token = await getIdToken();
+    testAuthorized(app, 'post', path, token, { 'stage': 0 })
+    .expect(201)
+    .then(response => {
+      expect(response.body.status).toEqual('success');
+      done();
+    })
+  });
+
+  it('Then project change actual stage', async (done) => {
+    const token = await getIdToken();
+    const path = `/projects/${pid}`;
+    testAuthorized(app, 'get', path, token)
+    .expect(200)
+    .then(response => {
+      expect(response.body.status).toEqual('success');
+      expect(response.body.data).toMatchObject(expect.objectContaining({
+        state: 'in_progress',
+        actualstage: 1
+      }))
+      done();
+    })
+  });
+
+  it('Then project gets seer1 vote', async (done) => {
+    const path = `/projects/${pid}/vote`;
+    await firebaseLoginUser(users.seer1);
+    const token = await getIdToken();
+    testAuthorized(app, 'post', path, token, { 'stage': 1 })
+    .expect(201)
+    .then(response => {
+      expect(response.body.status).toEqual('success');
+      done();
+    })
+  });
+
+  it('Then project gets seer2 vote', async (done) => {
+    const path = `/projects/${pid}/vote`;
+    await firebaseLoginUser(users.seer2);
+    const token = await getIdToken();
+    testAuthorized(app, 'post', path, token, { 'stage': 1 })
+    .expect(201)
+    .then(response => {
+      expect(response.body.status).toEqual('success');
+      done();
+    })
+  });
+
+  it('Then project gets seer3 vote', async (done) => {
+    const path = `/projects/${pid}/vote`;
+    await firebaseLoginUser(users.seer3);
+    const token = await getIdToken();
+    testAuthorized(app, 'post', path, token, { 'stage': 1 })
+    .expect(201)
+    .then(response => {
+      expect(response.body.status).toEqual('success');
+      done();
+    })
+  });
+
+  it('Then project change actual stage and state', async (done) => {
+    const token = await getIdToken();
+    const path = `/projects/${pid}`;
+    testAuthorized(app, 'get', path, token)
+    .expect(200)
+    .then(response => {
+      expect(response.body.status).toEqual('success');
+      expect(response.body.data).toMatchObject(expect.objectContaining({
+        state: 'completed',
+        actualstage: 2
+      }))
+      done();
+    })
+  });
+
 });

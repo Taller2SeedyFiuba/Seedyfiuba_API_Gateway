@@ -43,7 +43,7 @@ const getStatus = async (req, res, next) => {
 
   await axios.get(PAYMENTS_URL + '/status').
   catch(err => {
-    responses.sponsors = "ERROR"
+    responses.payments = "ERROR"
   })
 
   return res.status(200).json({

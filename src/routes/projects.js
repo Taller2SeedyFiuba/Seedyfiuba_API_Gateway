@@ -20,14 +20,7 @@ router.post('/:projectid([0-9]+)/favourites', authServiceWithError, hocError(spo
 
 router.get('/review', authServiceWithError, hocError(viewersController.getProjectsOnReview));
 router.post('/:projectid([0-9]+)/review', authServiceWithError, hocError(viewersController.addProject));
+router.post('/:projectid([0-9]+)/vote', authServiceWithError, hocError(viewersController.voteProject));
 
 module.exports = router;
 
-
-/*
-- Darse de alta como veedor en el sistema                                                       -> POST /viewers
-- Listar proyectos en estado 'on_review'                                                        -> GET  /projects/review
-- Solicitar ser veedor de un proyecto (esto automaticamente seria una aceptacion del proyecto?) -> POST /projects/{id}/viewers
-- Ver mis proyectos veedados.                                                                   -> GET  /viewers/mine
-- Votar a favor de un proyecto (posible cambio de estado).                                      -> POST /projects/{id}/vote
-*/

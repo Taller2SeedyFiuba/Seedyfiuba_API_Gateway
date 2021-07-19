@@ -1010,22 +1010,6 @@
               "type": "integer"
             },
             "description": "ID of the project to review"
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Maximum number of projects to retrieve"
-          },
-          {
-            "in": "query",
-            "name": "page",
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Page number of projects result to retrieve"
           }
         ],
         "security": [
@@ -1048,6 +1032,80 @@
                     "projectid": {
                       "type": "integer",
                       "example": 2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The specified project id is wrong."
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/projects/{id}/vote": {
+      "post": {
+        "tags": [
+          "viewers"
+        ],
+        "summary": "Project specified by id will approved for reviewer",
+        "operationId": "viewerVoteProject",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the project to review"
+          }
+        ],
+        "requestBody": {
+          "description": "A JSON object containing stage to vote",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "stage": {
+                    "type": "integer",
+                    "description": "Stage to vote as completed"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userid": {
+                      "type": "string",
+                      "example": "1lmoj2LKM10ADS"
+                    },
+                    "projectid": {
+                      "type": "integer",
+                      "example": 2
+                    },
+                    "stage": {
+                      "type": "integer",
+                      "example": 0
                     }
                   }
                 }

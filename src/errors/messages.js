@@ -11,6 +11,8 @@ module.exports = {
   OWNER_CANT_FAVOURITE: 'owner-cant-favourite',
   PROJECT_NOT_ON_REVIEW: 'project-not-on-review',
   PROJECT_NOT_ON_FUNDING: 'project-not-on-funding',
+  PROJECT_NOT_IN_PROGRESS: 'project-not-in-progress',
+  WRONG_STAGE: 'wrong-given-stage',
   MISSING_AUTH_HEADER: 'missing-auth-header',
   INVALID_AUTH_HEADER: 'invalid-auth-header',
   USER_NOT_ADMIN: 'user-is-not-admin',

@@ -17,6 +17,7 @@ const publicAttributes = [
   'description',
   'type',
   'state',
+  'actualstage',
   'stages',
   'creationdate',
   'location',
@@ -120,6 +121,7 @@ exports.adminGetProject = async(req, res, next) => {
   let reqRes = await axios.get(PROJECTS_URL + '/' + req.params.projectid);
   const response = reqRes.data
 
+  //Por que un admin querria tener un proyecto como favorito?
   const query = 'projectid=' + req.params.projectid + '&userid=' + req.id
   reqRes = await axios.get(SPONSORS_URL + '/favourites?' + query);
 

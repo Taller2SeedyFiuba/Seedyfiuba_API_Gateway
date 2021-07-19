@@ -97,3 +97,52 @@ exports.getProjectsOnReview = async(req, res, next) => {
 
   res.status(200).json(response.data);
 };
+
+
+exports.voteProject = async(req, res, next) => {
+  const { projectid } = req.params;
+
+  let projectResponse;
+  try {
+    projectResponse = await axios.get(PROJECTS_URL + '/' + projectid)
+  } catch (err) {
+    if (err.response && err.response.status == ApiError.codes.notFound){
+      throw ApiError.badRequest(err.response.data.error)
+    } else { throw err }
+  }
+
+  //const project = projectResponse.data.data;
+  const { state, actualstage } = projectResponse.data.data
+
+  if (state != 'in_progress'){
+    throw ApiError.badRequest(errMsg.PROJECT_NOT_IN_PROGRESS)
+  }
+
+  if ((req.body.stage == undefined) || (req.body.stage != actualstage)){
+    throw ApiError.badRequest(errMsg.WRONG_STAGE);
+  }
+
+  const sponsorsBody = {
+    projectid,
+    stage: req.body.stage
+  }
+
+  const sponsorsResponse = await axios.post(SPONSORS_URL + '/viewers/' + req.id + '/vote', sponsorsBody);
+  const resp = await axios.post(PAYMENT_URL + '/projects/' + projectid + '/viewers/' + req.id + '/votes', {
+    'completedStage': actualstage
+  });
+
+  /** If project reaches 3 votes we change the stage or state */
+  const projectData = resp.data.data;
+
+  console.log(projectData)
+
+  if (projectData.currentStage != actualstage || projectData.state != state) {
+    await axios.patch(PROJECTS_URL + '/' + projectid, {
+      state: projectData.state,
+      actualstage: Number(projectData.currentStage)
+    });
+  }
+
+  res.status(201).json(sponsorsResponse.data);
+};
