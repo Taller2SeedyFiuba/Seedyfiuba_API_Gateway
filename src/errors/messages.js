@@ -9,6 +9,7 @@ module.exports = {
   EDIT_PROJECT_PERMISSIONS: "edition-permissions",
   OWNER_CANT_SPONSOR:'owner-cant-sponsor',
   OWNER_CANT_FAVOURITE: 'owner-cant-favourite',
+  OWNER_CANT_REVIEW: 'owner-cant-review',
   PROJECT_NOT_ON_REVIEW: 'project-not-on-review',
   PROJECT_NOT_ON_FUNDING: 'project-not-on-funding',
   PROJECT_NOT_IN_PROGRESS: 'project-not-in-progress',

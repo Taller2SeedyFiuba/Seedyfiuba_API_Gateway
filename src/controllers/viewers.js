@@ -135,8 +135,6 @@ exports.voteProject = async(req, res, next) => {
   /** If project reaches 3 votes we change the stage or state */
   const projectData = resp.data.data;
 
-  console.log(projectData)
-
   if (projectData.currentStage != actualstage || projectData.state != state) {
     await axios.patch(PROJECTS_URL + '/' + projectid, {
       state: projectData.state,

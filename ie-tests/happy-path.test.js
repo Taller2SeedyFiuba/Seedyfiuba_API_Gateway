@@ -8,6 +8,7 @@ const {
   users } = require('./utils/firebase.config');
 const { testAuthorized } = require('./utils/auth');
 const { getFakeProject } = require('./utils/utils')
+const { BigNumber } = require('bignumber.js')
 const app = createApp();
 
 const data = getFakeProject();
@@ -21,6 +22,8 @@ const projectCheck = {
   tags: expect.arrayContaining(data.tags),
   stages: expect.arrayContaining(data.stages)
 }
+
+console.log(`AMOUNT DEL PROYECTO = ${data.stages[0].amount}, ${data.stages[1].amount}`)
 
 const createProjectWithAssertion = async function (){
   let pid = -1
@@ -36,12 +39,29 @@ const createProjectWithAssertion = async function (){
   }
 }
 
+const getEntrepreneurWalletBalanceWithAssertion = async function(){
+  let balance = -1;
+  const token = await getIdToken();
+  try {
+    const response = await testAuthorized(app, 'get', '/users/wallets/mine', token).expect(200)
+    expect(response.body.status).toEqual('success');
+    balance = response.body.data.balance//Number();
+    console.log(`BALANCE = ${response.body.data.balance}`)
+    return balance
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
 // Comienzan los tests
 describe('Correct Flow', function() {
   let pid = -1;
+  let entrepreneurWalletBalance = -1;
   beforeAll(async () => {
     await firebaseLoginUser(users.entrepreneur);
     pid =  await createProjectWithAssertion();
+    entrepreneurWalletBalance = await getEntrepreneurWalletBalanceWithAssertion();
   });
 
   it('Authorized response seer1', async (done) => {
@@ -113,6 +133,13 @@ describe('Correct Flow', function() {
     })
   });
 
+  it('Then owner continues with same wallet balance', async (done) => {
+    await firebaseLoginUser(users.entrepreneur);
+    const actualBalance = await getEntrepreneurWalletBalanceWithAssertion();
+    expect(actualBalance).toEqual(entrepreneurWalletBalance)
+    done();
+  });
+
   it('Then project gets completly funded, with more eths that correspond', async (done) => {
     await firebaseLoginUser(users.sponsor);
     const token = await getIdToken();
@@ -145,6 +172,15 @@ describe('Correct Flow', function() {
       }))
       done();
     })
+  });
+
+  it('Then owner receives first stage amount', async (done) => {
+    await firebaseLoginUser(users.entrepreneur);
+    const actualBalance = await getEntrepreneurWalletBalanceWithAssertion();
+    const am1 = new BigNumber(data.stages[0].amount)
+    const baseBalance = new BigNumber(entrepreneurWalletBalance)
+    expect(actualBalance).toEqual(baseBalance.plus(am1).toString())
+    done();
   });
 
   it('Then project gets seer1 vote', async (done) => {
@@ -211,6 +247,16 @@ describe('Correct Flow', function() {
       }))
       done();
     })
+  });
+
+  it('Then owner receives second and last stage amount', async (done) => {
+    await firebaseLoginUser(users.entrepreneur);
+    const actualBalance = await getEntrepreneurWalletBalanceWithAssertion();
+    const am1 = new BigNumber(data.stages[0].amount)
+    const am2 = new BigNumber(data.stages[1].amount)
+    const baseBalance = new BigNumber(entrepreneurWalletBalance)
+    expect(actualBalance).toEqual(baseBalance.plus(am1).plus(am2).toString())
+    done();
   });
 
   it('Then project gets seer1 vote', async (done) => {
