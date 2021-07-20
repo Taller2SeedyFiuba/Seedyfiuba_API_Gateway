@@ -1,10 +1,7 @@
 'use strict'
 
 const axios = require('axios');
-const PROJECTS_URL = process.env.PROJECTS_MS;
-const USERS_URL = process.env.USERS_MS;
-const SPONSORS_URL = process.env.SPONSORS_MS;
-const PAYMENTS_URL = process.env.PAYMENT_GTW_MS;
+const { services }  = require('../config')
 
 const { ApiError } = require('../errors/ApiError');
 
@@ -26,22 +23,22 @@ const getStatus = async (req, res, next) => {
     payments: "OK"
   }
 
-  await axios.get(USERS_URL + '/status').
+  await axios.get(services.users + '/status').
   catch(err => {
     responses.users = "ERROR"
   })
 
-  await axios.get(PROJECTS_URL + '/status').
+  await axios.get(services.projects + '/status').
   catch(err => {
     responses.projects = "ERROR"
   })
 
-  await axios.get(SPONSORS_URL + '/status').
+  await axios.get(services.sponsors + '/status').
   catch(err => {
     responses.sponsors = "ERROR"
   })
 
-  await axios.get(PAYMENTS_URL + '/status').
+  await axios.get(services.payments + '/status').
   catch(err => {
     responses.payments = "ERROR"
   })

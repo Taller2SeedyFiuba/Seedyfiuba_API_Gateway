@@ -1,11 +1,7 @@
 'use strict'
 
 const axios = require('axios');
-const SPONSORS_URL = process.env.SPONSORS_MS;
-const PROJECTS_URL = process.env.PROJECTS_MS
-const PAYMENT_URL = process.env.PAYMENT_GTW_MS;
-
-
+const { services } = require('../config')
 const { ApiError } = require('../errors/ApiError');
 const errMsg = require('../errors/messages')
 
@@ -13,7 +9,7 @@ exports.subscribeToViewing = async(req, res, next) => {
   const bodyViewers = {
     userid: req.id
   }
-  const response = await axios.post(SPONSORS_URL + '/viewers', bodyViewers);
+  const response = await axios.post(services.sponsors + '/viewers', bodyViewers);
 
   //Aca falta agregar un patch al servicio de usuarios, que modifique el campo "isviewer"
 
@@ -24,7 +20,7 @@ exports.addProject = async(req, res, next) => {
   const { projectid } = req.params;
   let projectResponse;
   try {
-    projectResponse = await axios.get(PROJECTS_URL + '/' + projectid)
+    projectResponse = await axios.get(services.projects + '/' + projectid)
 
   } catch (err) {
     if (err.response && err.response.status == ApiError.codes.notFound){
@@ -45,16 +41,16 @@ exports.addProject = async(req, res, next) => {
   const bodyFavourites = {
     projectid
   }
-  const resp = await axios.post(PAYMENT_URL + '/projects/' + projectid + '/viewers', {
+  const resp = await axios.post(services.payments + '/projects/' + projectid + '/viewers', {
     ownerid: req.id,
   });
 
-  const sponsorsResponse = await axios.post(SPONSORS_URL + '/viewers/' + req.id + '/projects', bodyFavourites);
+  const sponsorsResponse = await axios.post(services.sponsors + '/viewers/' + req.id + '/projects', bodyFavourites);
 
   /** If project reaches 3 reviewers we change the state */
   const projectData = resp.data.data;
   if (projectData.state === 'funding') {
-    await axios.patch(PROJECTS_URL + '/' + projectid, {
+    await axios.patch(services.projects + '/' + projectid, {
       state: 'funding'
     });
   }
@@ -67,25 +63,25 @@ exports.getMyReviews = async(req, res, next) => {
                       + "&limit=" + (req.query.limit || 10)
                       + "&page=" + (req.query.page || 1)
 
-  let sponsorsResponse = await axios.get(SPONSORS_URL + '/viewers/' + req.id);
+  let sponsorsResponse = await axios.get(services.sponsors + '/viewers/' + req.id);
   if (sponsorsResponse.data.data == false){
     throw ApiError.notAuthorized("user-is-not-viewer")
   }
 
-  sponsorsResponse = await axios.get(SPONSORS_URL + '/viewers?' + sponsorsQuery);
+  sponsorsResponse = await axios.get(services.sponsors + '/viewers?' + sponsorsQuery);
   if (sponsorsResponse.data.data.length == 0){
     return res.status(200).json(sponsorsResponse.data);
   }
 
   let projectsQuery = sponsorsResponse.data.data.map(elem => { return 'id='+elem.projectid }).join('&')
   projectsQuery += "&limit=" + (req.query.limit || 10)  + "&page=1"
-  const projectsResponse = await axios.get(PROJECTS_URL + '/search?' + projectsQuery);
+  const projectsResponse = await axios.get(services.projects + '/search?' + projectsQuery);
 
   res.status(200).json(projectsResponse.data);
 };
 
 exports.getProjectsOnReview = async(req, res, next) => {
-  const sponsorsResponse = await axios.get(SPONSORS_URL + '/viewers/' + req.id);
+  const sponsorsResponse = await axios.get(services.sponsors + '/viewers/' + req.id);
   if (sponsorsResponse.data.data == false){
     throw ApiError.notAuthorized(errMsg.USER_NOT_VIEWER)
   }
@@ -93,7 +89,7 @@ exports.getProjectsOnReview = async(req, res, next) => {
               + "&limit=" + (req.query.limit || 10)
               + "&page="  + (req.query.page  || 1)
 
-  const response = await axios.get(PROJECTS_URL + '/search?' + query);
+  const response = await axios.get(services.projects + '/search?' + query);
 
   res.status(200).json(response.data);
 };
@@ -104,7 +100,7 @@ exports.voteProject = async(req, res, next) => {
 
   let projectResponse;
   try {
-    projectResponse = await axios.get(PROJECTS_URL + '/' + projectid)
+    projectResponse = await axios.get(services.projects + '/' + projectid)
   } catch (err) {
     if (err.response && err.response.status == ApiError.codes.notFound){
       throw ApiError.badRequest(err.response.data.error)
@@ -127,8 +123,8 @@ exports.voteProject = async(req, res, next) => {
     stage: req.body.stage
   }
 
-  const sponsorsResponse = await axios.post(SPONSORS_URL + '/viewers/' + req.id + '/vote', sponsorsBody);
-  const resp = await axios.post(PAYMENT_URL + '/projects/' + projectid + '/viewers/' + req.id + '/votes', {
+  const sponsorsResponse = await axios.post(services.sponsors + '/viewers/' + req.id + '/vote', sponsorsBody);
+  const resp = await axios.post(services.payments + '/projects/' + projectid + '/viewers/' + req.id + '/votes', {
     'completedStage': actualstage
   });
 
@@ -136,7 +132,7 @@ exports.voteProject = async(req, res, next) => {
   const projectData = resp.data.data;
 
   if (projectData.currentStage != actualstage || projectData.state != state) {
-    await axios.patch(PROJECTS_URL + '/' + projectid, {
+    await axios.patch(services.projects + '/' + projectid, {
       state: projectData.state,
       actualstage: Number(projectData.currentStage)
     });
