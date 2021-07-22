@@ -6,9 +6,10 @@ const authService = require('../services/auth');
 const { adminValidation } = require('../services/admin');
 
 const { hocError } = require('../errors/handler');
+const { getMetrics } = require('../controllers/metrics');
 
 const validations = [
-    hocError(authService.authorize), 
+    hocError(authService.authorize),
     hocError(adminValidation)
 ]
 
