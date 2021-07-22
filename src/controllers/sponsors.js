@@ -9,7 +9,7 @@ const errMsg = require('../errors/messages')
 exports.addSponsor = async(req, res, next) => {
   const { projectid } = req.params
   let { amount } = req.body
-  //Estos chequeos son necesarios antes de la block
+
   const projectResponse = await axios.get(services.projects + '/' + projectid).
   catch(err => {
     if (err.response && err.response.status == ApiError.codes.notFound){
@@ -21,31 +21,27 @@ exports.addSponsor = async(req, res, next) => {
   if (ownerid == req.id)
     throw ApiError.badRequest(errMsg.OWNER_CANT_SPONSOR);
 
-  //Chequeo de estado, por ahora no lo tenemos en cuenta
   if (state != 'funding'){
     throw ApiError.badRequest(errMsg.PROJECT_NOT_ON_FUNDING)
   }
 
-  //Aca deberia ir el llamado al endpoint de payments el cual va a recibir un amount a aportar.
   const resp = await axios.post(services.payments + '/projects/' + projectid + '/transactions', {
     ownerid: req.id,
     amount,
   });
 
-
-  //Necesitamos como respuesta de la llamada la cantidad de dinero que efectivamente se aporto
-
   const bodySponsors = {
     userid: req.id,
     projectid
   }
+
   const sponsorsResponse = await axios.post(services.sponsors + '/sponsors', bodySponsors);
   const bodyProjects = {
     sponsorscount: sponsorsResponse.data.data.newsponsor ? 1 : undefined,
     missingamount: resp.data.data.missingAmount,
     state: resp.data.data.state,
   }
-  //Si esto de aca llega a fallar queda un sponsor fantasma cargado en el servicio de sponsors
+
   await axios.patch(services.projects + '/' + projectid, bodyProjects);
 
   res.status(201).json({
