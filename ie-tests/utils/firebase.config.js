@@ -27,6 +27,21 @@ const users = {
     pass: 'Qwe12345',
     uid: 'qDzHIJjwNqSm8HEN308LeQXHnbq2',
   },
+  seer1: {
+    email: 'seer1@test.com',
+    pass: 'Qwe12345',
+    uid: 'C5Jeg8M5HKaIKOqXt5bZX7IdWFk2',
+  },
+  seer2: {
+    email: 'seer2@test.com',
+    pass: 'Qwe12345',
+    uid: 'pvs2jwbOFiZN4WOtQBYmr5LzLU53',
+  },
+  seer3: {
+    email: 'seer3@test.com',
+    pass: 'Qwe12345',
+    uid: 'pvs2jwbOFiZN4WOtQBYmr5LzLU53',
+  }
 }
 
 const firebaseLoginUser = async ({ email, pass }) => {

@@ -158,7 +158,7 @@ describe('PATCH /admin/user/{id}', function() {
     const { token } = await logAdmin();
 
     await testAuthorized(app, 'patch', path, token)
-    .expect(404)
+    .expect(400)
     .then(response => {
       expect(response.body.status).toEqual('error');
       expect(response.body.message).toBeDefined();

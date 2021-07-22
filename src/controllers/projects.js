@@ -2,9 +2,7 @@
 
 const axios = require('axios');
 const { pick, getQueryString } = require('../utils/util')
-const PROJECTS_URL = process.env.PROJECTS_MS;
-const PAYMENTS_URL = process.env.PAYMENT_GTW_MS;
-const SPONSORS_URL = process.env.SPONSORS_MS;
+const { services }  = require('../config')
 
 const { ApiError } = require('../errors/ApiError');
 const errMsg = require('../errors/messages')
@@ -17,6 +15,7 @@ const publicAttributes = [
   'description',
   'type',
   'state',
+  'actualstage',
   'stages',
   'creationdate',
   'location',
@@ -32,21 +31,21 @@ exports.search = async(req, res, next) => {
 
   const query = getQueryString(req.originalUrl)
   //Aca falta filtrar los proyectos cancelados o en estado on_review
-  const reqRes = await axios.get(PROJECTS_URL + '/search' + query);
+  const reqRes = await axios.get(services.projects + '/search' + query);
 
   res.status(200).json(reqRes.data);
 };
 
 exports.view = async(req, res, next) => {
   const projectid = req.params.id
-  let reqRes = await axios.get(PROJECTS_URL + '/' + projectid);
+  let reqRes = await axios.get(services.projects + '/' + projectid);
   const response = reqRes.data
   if (req.id != response.data.ownerid){
     response.data = pick(response.data, publicAttributes)
   }
 
   const query = 'projectid=' + projectid + '&userid=' + req.id
-  reqRes = await axios.get(SPONSORS_URL + '/favourites?' + query);
+  reqRes = await axios.get(services.sponsors + '/favourites?' + query);
 
   response.data.isfavourite = reqRes.data.data.length > 0
 
@@ -55,30 +54,29 @@ exports.view = async(req, res, next) => {
 
 exports.create = async(req, res, next) => {
 
-  const reqRes = await axios.post(PROJECTS_URL, {
+  const reqRes = await axios.post(services.projects, {
     ownerid: req.id,
     ... req.body
   });
 
   const stages = req.body.stages.map((data) => data.amount);
 
-  //TODO: Volver a acoplar el servicio de payments.
-  //await axios.post(PAYMENTS_URL + '/projects', {
-  //  ownerid: req.id,
-  //  projectid: reqRes.data.data.id,
-  //  stages,
-  //});
+  await axios.post(services.payments + '/projects', {
+   ownerid: req.id,
+   projectid: reqRes.data.data.id,
+   stages,
+  });
 
   res.status(201).json(reqRes.data);
 }
 
 exports.update = async(req, res, next) => {
-  const auxRes = await axios.get(PROJECTS_URL + '/' + req.params.id);
+  const auxRes = await axios.get(services.projects + '/' + req.params.id);
   const response = auxRes.data
   if (response.data.ownerid != req.id){
     throw ApiError.notAuthorized(errMsg.EDIT_PROJECT_PERMISSIONS)
   }
-  const reqRes = await axios.patch(PROJECTS_URL + '/' + req.params.id, req.body);
+  const reqRes = await axios.patch(services.projects + '/' + req.params.id, req.body);
 
   res.status(200).json(reqRes.data);
 }
@@ -94,7 +92,7 @@ const getUserProjectsAux = async(req, res, id) => {
     query = query.concat('?ownerid=' + id)
   }
 
-  reqRes = await axios.get(PROJECTS_URL + '/search' + query);
+  reqRes = await axios.get(services.projects + '/search' + query);
 
   return res.status(200).json(reqRes.data);
 }
@@ -110,7 +108,7 @@ exports.getMyProjects = async(req, res, next) => {
 exports.adminListProjects = async(req, res, next) => {
 
   const query = getQueryString(req.originalUrl)
-  const reqRes = await axios.get(PROJECTS_URL + '/search' + query);
+  const reqRes = await axios.get(services.projects + '/search' + query);
 
   res.status(200).json(reqRes.data);
 };
@@ -118,11 +116,12 @@ exports.adminListProjects = async(req, res, next) => {
 
 exports.adminGetProject = async(req, res, next) => {
 
-  let reqRes = await axios.get(PROJECTS_URL + '/' + req.params.projectid);
+  let reqRes = await axios.get(services.projects + '/' + req.params.projectid);
   const response = reqRes.data
 
+  //Por que un admin querria tener un proyecto como favorito?
   const query = 'projectid=' + req.params.projectid + '&userid=' + req.id
-  reqRes = await axios.get(SPONSORS_URL + '/favourites?' + query);
+  reqRes = await axios.get(services.sponsors + '/favourites?' + query);
 
   response.data.isfavourite = reqRes.data.data.length > 0
 

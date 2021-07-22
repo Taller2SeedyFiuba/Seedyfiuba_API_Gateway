@@ -1,16 +1,14 @@
 
-const PROJECT_URL = 'https://seedyfiuba-back-projects.herokuapp.com/api'
-
 /** Mock Axios */
 const axios = require('axios');
 jest.mock('axios');
 
-const { search, 
-        getUserProjects, 
+const { search,
+        getUserProjects,
         getMyProjects,
-        view, 
-        create, 
-        update, 
+        view,
+        create,
+        update,
         destroy } = require('./projects');
 const { ApiError } = require('../errors/ApiError');
 
@@ -63,7 +61,7 @@ test('/search unsuccessful response with a given error code', async () => {
       }
     }
   };
-  
+
   const errorCode = 400 //Could be any
 
   axios.get.mockReturnValue(new Error({
@@ -176,7 +174,7 @@ test('/create successful response', async () => {
     'att2': 'masData',
     'stages': [10, 20, 300]
   }
- 
+
   const req = {
     id,
     body: originalBody

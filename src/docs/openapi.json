@@ -1010,22 +1010,6 @@
               "type": "integer"
             },
             "description": "ID of the project to review"
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Maximum number of projects to retrieve"
-          },
-          {
-            "in": "query",
-            "name": "page",
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Page number of projects result to retrieve"
           }
         ],
         "security": [
@@ -1048,6 +1032,80 @@
                     "projectid": {
                       "type": "integer",
                       "example": 2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The specified project id is wrong."
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/projects/{id}/vote": {
+      "post": {
+        "tags": [
+          "viewers"
+        ],
+        "summary": "Project specified by id will approved for reviewer",
+        "operationId": "viewerVoteProject",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the project to review"
+          }
+        ],
+        "requestBody": {
+          "description": "A JSON object containing stage to vote",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "stage": {
+                    "type": "integer",
+                    "description": "Stage to vote as completed"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userid": {
+                      "type": "string",
+                      "example": "1lmoj2LKM10ADS"
+                    },
+                    "projectid": {
+                      "type": "integer",
+                      "example": 2
+                    },
+                    "stage": {
+                      "type": "integer",
+                      "example": 0
                     }
                   }
                 }
@@ -1416,6 +1474,67 @@
           }
         }
       }
+    },
+    "/admin/metrics": {
+      "get": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "Returns business metrics.",
+        "description": "This can only be done by an admin",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "timeinterval",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Time interval to measure metrics"
+          },
+          {
+            "in": "query",
+            "name": "fromdate",
+            "schema": {
+              "type": "string"
+            },
+            "description": "First date to measure"
+          },
+          {
+            "in": "query",
+            "name": "todate",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Last date to measure"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Metrics"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Logged user is not an admin"
+          },
+          "404": {
+            "description": "A user with the specified ID was not found."
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1691,6 +1810,84 @@
             "type": "string",
             "description": "Balance en ethers",
             "example": "0.0023"
+          }
+        }
+      },
+      "Metrics": {
+        "type": "object",
+        "properties": {
+          "usershistory": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "timestamp": {
+                  "type": "string"
+                },
+                "metric": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "viewershistory": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "timestamp": {
+                  "type": "string"
+                },
+                "metric": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "actualadmins": {
+            "type": "integer"
+          },
+          "projectshistory": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "timestamp": {
+                  "type": "string"
+                },
+                "metric": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "projectsbystate": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "timestamp": {
+                  "type": "string"
+                },
+                "metric": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "projectsbytype": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "timestamp": {
+                  "type": "string"
+                },
+                "metric": {
+                  "type": "integer"
+                }
+              }
+            }
           }
         }
       }
