@@ -9,10 +9,25 @@ exports.pick = function (obj, attrs) {
 //If '?' character is found in url, then this function will return
 //the substring containing all of the query params, starting with '?'.
 //If '?' is not found, an empty string is returned.
-exports.getQueryString = function (url) {
+exports.getQueryString = function (url, addQueryParams=undefined) {
   let query = ''
-  const idx = url.indexOf('?')
-  if (idx != -1) query = url.substring(idx)
+  let idx = url.indexOf('?')
+  let sep = "?"
+  if (idx != -1){
+    query = url.substring(idx)
+    sep = "&"
+  }
+  if (addQueryParams){
+    query.concat(toQueryString(addQueryParams, sep))
+  }
+  return query
+}
 
+exports.toQueryString = function (queryParams, sep="?") {
+  let query = ''
+  for ([k, v] of Object.entries(queryParams)){
+    query = query.concat(`${sep}${k}=${v}`);
+    sep = "&"
+  }
   return query
 }

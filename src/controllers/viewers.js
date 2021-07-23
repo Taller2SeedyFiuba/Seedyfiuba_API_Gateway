@@ -2,6 +2,7 @@
 
 const axios = require('axios');
 const { services } = require('../config')
+const { toQueryString } = require('../utils/util')
 const { ApiError } = require('../errors/ApiError');
 const errMsg = require('../errors/messages')
 
@@ -10,8 +11,6 @@ exports.subscribeToViewing = async(req, res, next) => {
     userid: req.id
   }
   const response = await axios.post(services.sponsors + '/viewers', bodyViewers);
-
-  //Aca falta agregar un patch al servicio de usuarios, que modifique el campo "isviewer"
 
   res.status(201).json(response.data);
 };
@@ -59,16 +58,22 @@ exports.addProject = async(req, res, next) => {
 };
 
 exports.getMyReviews = async(req, res, next) => {
-  const sponsorsQuery = "userid=" + req.id
-                      + "&limit=" + (req.query.limit || 10)
-                      + "&page=" + (req.query.page || 1)
+
+  req.query = {
+    ...req.query,
+    limit: (req.query.limit || 10),
+    page: (req.query.page || 1),
+    userid: req.id
+  }
+
+  const sponsorsQuery = toQueryString(req.query)
 
   let sponsorsResponse = await axios.get(services.sponsors + '/viewers/' + req.id);
   if (sponsorsResponse.data.data == false){
     throw ApiError.notAuthorized("user-is-not-viewer")
   }
 
-  sponsorsResponse = await axios.get(services.sponsors + '/viewers?' + sponsorsQuery);
+  sponsorsResponse = await axios.get(services.sponsors + '/viewers' + sponsorsQuery);
   if (sponsorsResponse.data.data.length == 0){
     return res.status(200).json(sponsorsResponse.data);
   }

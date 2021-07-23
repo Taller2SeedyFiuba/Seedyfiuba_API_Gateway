@@ -706,6 +706,14 @@
         "parameters": [
           {
             "in": "query",
+            "name": "projectid",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by a given project id"
+          },
+          {
+            "in": "query",
             "name": "limit",
             "schema": {
               "type": "integer"
@@ -818,6 +826,14 @@
         "summary": "List logged user favourite projects",
         "operationId": "getFavouriteProjects",
         "parameters": [
+          {
+            "in": "query",
+            "name": "projectid",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by a given project id"
+          },
           {
             "in": "query",
             "name": "limit",
@@ -1129,6 +1145,14 @@
         "summary": "List logged user reviewed projects",
         "operationId": "getReviewedProjects",
         "parameters": [
+          {
+            "in": "query",
+            "name": "projectid",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by a given project id"
+          },
           {
             "in": "query",
             "name": "limit",

@@ -22,18 +22,11 @@ const startRoutes = (app) => {
   app.use('/admin', admins)
 
   app.get('/status', statusController.getStatus);
-  
+
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
     customJs: '/static/loadFirebase.js',
     customCssUrl: '/static/loadFirebase.css',
   }));
-
-  app.get('/fail', (req, res) => {
-    return res.status(500).json({
-      "status": "error",
-      "error": "Intentional server error"
-    });
-  });
 
 }
 
