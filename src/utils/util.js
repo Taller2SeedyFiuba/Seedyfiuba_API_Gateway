@@ -26,8 +26,15 @@ exports.getQueryString = function (url, addQueryParams=undefined) {
 exports.toQueryString = function (queryParams, sep="?") {
   let query = ''
   for ([k, v] of Object.entries(queryParams)){
-    query = query.concat(`${sep}${k}=${v}`);
-    sep = "&"
+    if (v instanceof Array){
+      v.forEach(elem => {
+        query = query.concat(`${sep}${k}=${elem}`);
+        sep = "&"
+      })
+    } else {
+      query = query.concat(`${sep}${k}=${v}`);
+      sep = "&"
+    }
   }
   return query
 }

@@ -21,10 +21,12 @@ const mockResponse = () => {
 
 test('/search successful response', async () => {
 
-  const searchQuery = '?type=software&tags=BuenProyecto'
   const req = {
     id: 1,
-    originalUrl: '/noimporta/search' + searchQuery
+    query: {
+      type: 'software',
+      tags: 'BuenProyecto'
+    }
   }
   const resObj = {
     data: {
@@ -46,41 +48,26 @@ test('/search successful response', async () => {
 });
 
 
-test('/search unsuccessful response with a given error code', async () => {
+test('/search unsuccessful error response, wrong parameter', async () => {
 
-  const searchQuery = '?type=software&tags=BuenProyecto'
   const req = {
     id: 1,
-    originalUrl: '/noimporta/search' + searchQuery
+    query: {
+      type: 'software',
+      tags: 'BuenProyecto',
+      state: 'on_review'
+    }
   }
-  const resObj = {
-    data: {
-      status: 'success',
-      data: {
-        "unCampo": "EstoNoSeVaAChequear"
-      }
-    }
-  };
-
-  const errorCode = 400 //Could be any
-
-  axios.get.mockReturnValue(new Error({
-    response:{
-      data: {
-        status: "error",
-        error: "mock-error"
-      },
-      status: errorCode
-    }
-  }));
 
   const res = mockResponse();
+
+  expect.assertions(2)
 
   try{
     await search(req, res);
   } catch (err) {
     expect(err).toBeInstanceOf(ApiError);
-    expect(err).toHaveProperty('code', errorCode);
+    expect(err).toHaveProperty('code', 400);
   }
 });
 

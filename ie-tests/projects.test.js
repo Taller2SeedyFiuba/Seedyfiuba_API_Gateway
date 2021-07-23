@@ -106,14 +106,16 @@ describe('GET /projects/search', function() {
     .expect(200)
     .then(response => {
       expect(response.body.status).toEqual('success');
-      expect(response.body.data).toMatchObject([projectResumeCheck])
+      //Dado que el proyecto se encuentra en 'on_review', es correcto que
+      //no se muestre al realizar la busqueda publica.
+      expect(response.body.data).toMatchObject([])
       done();
     })
   });
 
   it('Authorized response, bad request', async (done) => {
     const token = await getIdToken();
-    const path = '/projects/search?lat=100'
+    const path = '/projects/search?lat=100' //No longitude or distance provide
 
     testAuthorized(app, 'get', path, token)
     .expect(400)

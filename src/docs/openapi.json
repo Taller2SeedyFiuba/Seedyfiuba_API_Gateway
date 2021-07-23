@@ -459,11 +459,11 @@
           },
           {
             "in": "query",
-            "name": "stage",
+            "name": "state",
             "schema": {
               "type": "string"
             },
-            "description": "Stage of the project to get"
+            "description": "State of the project to get"
           },
           {
             "in": "query",
