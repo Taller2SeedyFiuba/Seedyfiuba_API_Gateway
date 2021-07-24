@@ -1,15 +1,18 @@
-
 /** Mock Axios */
 const axios = require('axios');
 jest.mock('axios');
 
-const { search,
-        getUserProjects,
-        getMyProjects,
-        view,
-        create,
-        update,
-        destroy } = require('./projects');
+const {
+  search,
+  view,
+  create,
+  update,
+  adminGetProject,
+  adminListProjects } = require('./projects');
+
+const rewire = require("rewire"); //To test non-exported functions
+const rewireImport = rewire("./projects");
+
 const { ApiError } = require('../errors/ApiError');
 
 const mockResponse = () => {
@@ -18,6 +21,10 @@ const mockResponse = () => {
   res.json = jest.fn().mockReturnValue(res);
   return res;
 };
+
+beforeEach(() => {
+  jest.clearAllMocks()
+})
 
 test('/search successful response', async () => {
 
@@ -47,8 +54,7 @@ test('/search successful response', async () => {
   expect(res.json).toHaveBeenCalledWith(resObj.data);
 });
 
-
-test('/search unsuccessful error response, wrong parameter', async () => {
+test('/search unsuccessful error, wrong state', async () => {
 
   const req = {
     id: 1,
@@ -71,44 +77,43 @@ test('/search unsuccessful error response, wrong parameter', async () => {
   }
 });
 
-test('/getUserProjects successful response', async () => {
+test('/search unsuccessful response, axios error', async () => {
 
-  const searchQuery = '?type=software&tags=BuenProyecto'
   const req = {
     id: 1,
-    params: { id: 'userid1' },
-    originalUrl: '/noimporta/search' + searchQuery
+    query: {
+      type: 'software',
+      tags: 'BuenProyecto'
+    }
   }
 
-  const wantedQuery = searchQuery + '&ownerid=' + req.params.id
-  const resObj = {
-    data: {
-      status: 'success',
-      data: {
-        "unCampo": "EstoNoSeVaAChequear"
-      }
-    }
-  };
-
-  axios.get.mockReturnValue(resObj);
-
   const res = mockResponse();
+  const expectedError = new Error('error-message')
 
-  await getUserProjects(req, res);
+  axios.get.mockImplementation(() => {
+    throw expectedError
+  });
 
-  expect(res.status).toHaveBeenCalledWith(200);
-  expect(res.json).toHaveBeenCalledWith(resObj.data);
+  expect.assertions(2)
+
+  try{
+    await search(req, res);
+  } catch (err) {
+    expect(err).toBeInstanceOf(Error);
+    expect(err).toEqual(expectedError);
+  }
 });
 
-test('/getMyProjects successful response', async () => {
+
+test('/getUserProjectsAux successful response', async () => {
 
   const searchQuery = '?type=software&tags=BuenProyecto'
+  const id = 'userid1'
   const req = {
-    id: 'userid2',
     originalUrl: '/noimporta/search' + searchQuery
   }
 
-  const wantedQuery = searchQuery + '&ownerid=' + req.id
+  const wantedQuery = searchQuery + '&ownerid=' + id
   const resObj = {
     data: {
       status: 'success',
@@ -118,39 +123,120 @@ test('/getMyProjects successful response', async () => {
     }
   };
 
-  axios.get.mockReturnValue(resObj);
+  const mockAxiosGet = axios.get.mockReturnValue(resObj);
+
+  const getUserProjectsAux = rewireImport.__get__('getUserProjectsAux')
+  rewireImport.__set__('axios.get', mockAxiosGet)
 
   const res = mockResponse();
 
-  await getMyProjects(req, res);
+  await getUserProjectsAux(req, res, id);
 
+  expect(axios.get.mock.calls[0][0]).toContain(wantedQuery)
   expect(res.status).toHaveBeenCalledWith(200);
   expect(res.json).toHaveBeenCalledWith(resObj.data);
 });
 
-test('/view successful response', async () => {
+test('/view successful response, owner request', async () => {
 
-  const id = 1
   const req = {
-    params: { id }
+    id: 'ownerid',
+    params: { id: 1 }
   }
-  const resObj = {
+  const projectResponse = {
     data: {
       status: 'success',
       data: {
-        "unCampo": "EstoNoSeVaAChequear"
+        'privateAttribute': 'super-secret',
+        'ownerid': 'ownerid' //Project is owned by the user making the request
       }
     }
   };
+  const sponsorResponse = {
+    data: {
+      status: 'success',
+      data: []
+    }
+  };
+  const expectedResponse = {
+    status: 'success',
+    data: {
+      'privateAttribute': 'super-secret',
+      'ownerid': 'ownerid',
+      'isfavourite': false
+    }
+  }
 
-  axios.get.mockReturnValue(resObj);
+  axios.get.mockReturnValueOnce(projectResponse);
+  axios.get.mockReturnValueOnce(sponsorResponse);
 
   const res = mockResponse();
-
   await view(req, res);
 
   expect(res.status).toHaveBeenCalledWith(200);
-  expect(res.json).toHaveBeenCalledWith(resObj.data);
+  expect(res.json).toHaveBeenCalledWith(expectedResponse);
+});
+
+test('/view successful response, non-owner request', async () => {
+
+  const req = {
+    id: 'not-the-owner',
+    params: { id: 1 }
+  }
+  const projectResponse = {
+    data: {
+      status: 'success',
+      data: {
+        'privateAttribute': 'super-secret',
+        'ownerid': 'ownerid' //Project is owned by the user making the request
+      }
+    }
+  };
+  const sponsorResponse = {
+    data: {
+      status: 'success',
+      data: ['an-element']  //To trigger true in 'isfavourite'
+    }
+  };
+  const expectedResponse = {
+    status: 'success',
+    data: {
+      'ownerid': 'ownerid',
+      'isfavourite': true
+    }
+  }
+
+  axios.get.mockReturnValueOnce(projectResponse);
+  axios.get.mockReturnValueOnce(sponsorResponse);
+
+  const res = mockResponse();
+  await view(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(200);
+  expect(res.json).toHaveBeenCalledWith(expectedResponse);
+});
+
+test('/view axios error', async () => {
+
+  const req = {
+    params: { id: 1 }
+  }
+
+  const res = mockResponse();
+  const expectedError = new Error('error-message')
+
+  axios.get.mockImplementation(() => {
+    throw expectedError
+  });
+
+  expect.assertions(2)
+
+  try{
+    await view(req, res);
+  } catch (err) {
+    expect(err).toBeInstanceOf(Error);
+    expect(err).toEqual(expectedError);
+  }
 });
 
 test('/create successful response', async () => {
@@ -184,6 +270,35 @@ test('/create successful response', async () => {
 
   expect(res.status).toHaveBeenCalledWith(201);
   expect(res.json).toHaveBeenCalledWith(resObj.data);
+});
+
+test('/create axios error', async () => {
+
+  const id = 'ownerid'
+  const originalBody = {
+    'att1': 'data',
+    'att2': 'masData',
+    'stages': [10, 20, 300]
+  }
+  const req = {
+    id,
+    body: originalBody
+  }
+  const res = mockResponse();
+  const expectedError = new Error('error-message')
+
+  axios.post.mockImplementation(() => {
+    throw expectedError
+  });
+
+  expect.assertions(2)
+
+  try{
+    await create(req, res);
+  } catch (err) {
+    expect(err).toBeInstanceOf(Error);
+    expect(err).toEqual(expectedError);
+  }
 });
 
 
@@ -224,15 +339,92 @@ test('/update successful response', async () => {
 
   expect(res.status).toHaveBeenCalledWith(200);
   expect(res.json).toHaveBeenCalledWith(resObj.data);
+
 });
-/*
-test('/delete successful response', async () => {
+
+
+test('/update axios error', async () => {
 
   const id = 1
   const ownerid = 'id1'
+  const newData = {
+    'att1': 'data',
+    'att2': 'masData'
+  }
   const req = {
     id: ownerid,
-    params: { id }
+    params: { id },
+    body: newData
+  }
+
+  const res = mockResponse();
+  const expectedError = new Error('error-message')
+
+  axios.get.mockImplementation(() => {
+    throw expectedError
+  });
+
+  expect.assertions(2)
+
+  try{
+    await update(req, res);
+  } catch (err) {
+    expect(err).toBeInstanceOf(Error);
+    expect(err).toEqual(expectedError);
+  }
+});
+
+test('/adminGetProject succesful response', async () => {
+
+  const req = {
+    id: 'admin-id',
+    params: { id: 1 }
+  }
+  const projectResponse = {
+    data: {
+      status: 'success',
+      data: {
+        'privateAttribute': 'super-secret',
+        'ownerid': 'random-user-id' //Admin is not the project's owner
+      }
+    }
+  };
+  const sponsorResponse = {
+    data: {
+      status: 'success',
+      data: []
+    }
+  };
+  const expectedResponse = {
+    status: 'success',
+    data: {
+      'privateAttribute': 'super-secret',
+      'ownerid': 'random-user-id',
+      'isfavourite': false
+    }
+  }
+
+  axios.get.mockReturnValueOnce(projectResponse);
+  axios.get.mockReturnValueOnce(sponsorResponse);
+
+  const res = mockResponse();
+  await adminGetProject(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(200);
+  expect(res.json).toHaveBeenCalledWith(expectedResponse);
+});
+
+test('/adminListProjects successful response', async () => {
+
+  const searchQuery = '?type=software&tags=BuenProyecto&state=on_review' //Admin can list 'on_review' projects
+  const req = {
+    id: 1,
+    query: {
+      type: 'software',
+      tags: 'BuenProyecto',
+      state: 'on_review'
+    },
+    originalUrl: '/noimporta/search' + searchQuery
   }
   const resObj = {
     data: {
@@ -241,22 +433,14 @@ test('/delete successful response', async () => {
         "unCampo": "EstoNoSeVaAChequear"
       }
     }
-  }
-  const getResponse = {
-    data: {
-      status: 'success',
-      data: { ownerid }
-    }
-  }
-  axios.get.mockReturnValue(getResponse);
-  axios.delete.mockReturnValue(resObj);
+  };
+
+  axios.get.mockReturnValue(resObj);
 
   const res = mockResponse();
 
-  await destroy(req, res);
+  await adminListProjects(req, res);
 
   expect(res.status).toHaveBeenCalledWith(200);
   expect(res.json).toHaveBeenCalledWith(resObj.data);
 });
-*/
-

@@ -53,7 +53,6 @@ exports.search = async(req, res, next) => {
   }
 
   const query = toQueryString(req.query)
-  //Aca falta filtrar los proyectos cancelados o en estado on_review
   const reqRes = await axios.get(services.projects + '/search' + query);
 
   res.status(200).json(reqRes.data);

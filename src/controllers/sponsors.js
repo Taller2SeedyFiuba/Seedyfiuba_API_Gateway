@@ -10,12 +10,14 @@ exports.addSponsor = async(req, res, next) => {
   const { projectid } = req.params
   let { amount } = req.body
 
-  const projectResponse = await axios.get(services.projects + '/' + projectid).
-  catch(err => {
+  let projectResponse = 0;
+  try {
+    projectResponse = await axios.get(services.projects + '/' + projectid)
+  }catch(err){
     if (err.response && err.response.status == ApiError.codes.notFound){
       throw ApiError.badRequest(err.response.data.message)
     } else { throw err }
-  })
+  }
 
   const { ownerid, state } = projectResponse.data.data
   if (ownerid == req.id)
