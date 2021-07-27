@@ -1,4 +1,3 @@
-const request = require('supertest');
 const { createApp } = require('../../src/app');
 const faker = require('faker');
 const {
