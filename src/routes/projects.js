@@ -3,6 +3,7 @@ const router = express.Router();
 const projectsController = require('../controllers/projects');
 const sponsorsController = require('../controllers/sponsors');
 const viewersController = require('../controllers/viewers');
+const notificationsController = require('../controllers/notifications');
 const authService = require('../services/auth');
 
 const { hocError } = require('../errors/handler');
@@ -17,10 +18,13 @@ router.delete('/:id([0-9]+)', authServiceWithError, hocError(projectsController.
 
 router.post('/:projectid([0-9]+)/sponsors', authServiceWithError, hocError(sponsorsController.addSponsor));
 router.post('/:projectid([0-9]+)/favourites', authServiceWithError, hocError(sponsorsController.addFavourite));
+router.delete('/:projectid([0-9]+)/favourites', authServiceWithError, hocError(sponsorsController.deleteFavourite));
 
 router.get('/review', authServiceWithError, hocError(viewersController.getProjectsOnReview));
 router.post('/:projectid([0-9]+)/review', authServiceWithError, hocError(viewersController.addProject));
 router.post('/:projectid([0-9]+)/vote', authServiceWithError, hocError(viewersController.voteProject));
 
-module.exports = router;
+router.post('/:projectid([0-9]+)/notifications', authServiceWithError, hocError(notificationsController.subscribeToProject));
+router.delete('/:projectid([0-9]+)/notifications', authServiceWithError, hocError(notificationsController.deleteSubscription));
 
+module.exports = router;

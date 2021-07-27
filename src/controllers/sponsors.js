@@ -4,6 +4,7 @@ const axios = require('axios');
 const { services }  = require('../config')
 const { toQueryString } = require('../utils/util')
 const { ApiError } = require('../errors/ApiError');
+const notifications = require('../services/notifications')
 const errMsg = require('../errors/messages')
 
 exports.addSponsor = async(req, res, next) => {
@@ -19,7 +20,7 @@ exports.addSponsor = async(req, res, next) => {
     } else { throw err }
   }
 
-  const { ownerid, state } = projectResponse.data.data
+  const { ownerid, state, title } = projectResponse.data.data
   if (ownerid == req.id)
     throw ApiError.badRequest(errMsg.OWNER_CANT_SPONSOR);
 
@@ -45,6 +46,14 @@ exports.addSponsor = async(req, res, next) => {
   }
 
   await axios.patch(services.projects + '/' + projectid, bodyProjects);
+
+  if (sponsorsResponse.data.data.newsponsor){
+    await notifications.sendNewSponsor({userid: ownerid, title});
+  }
+
+  if (resp.data.data.state != state){
+    await notifications.sendNewState({id: projectid, title, state: resp.data.data.state});
+  }
 
   res.status(201).json({
     status: 'success',
@@ -131,3 +140,23 @@ exports.getMyFavourites = async(req, res, next) => {
 
   return res.status(200).json(projectsResponse.data);
 };
+
+
+exports.deleteFavourite = async(req, res, next) => {
+
+  const { projectid } = req.params
+
+  const uri = `/users/${req.id}/projects/${projectid}`
+
+  const favouritesResponse = await axios.delete(services.sponsors + '/favourites/' + uri);
+
+  const bodyProjects = {
+    favouritescount: -1
+  }
+  //Idem a sponsors, si se llega aca y falla queda un fav fantasma cargado.
+  await axios.patch(services.projects + '/' + projectid, bodyProjects);
+
+  return res.status(201).json(favouritesResponse.data);
+};
+
+

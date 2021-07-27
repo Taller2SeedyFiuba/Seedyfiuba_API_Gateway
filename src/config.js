@@ -6,7 +6,8 @@ module.exports = {
     users: process.env.USERS_MS,
     projects: process.env.PROJECTS_MS,
     sponsors: process.env.SPONSORS_MS,
-    payments: process.env.PAYMENT_GTW_MS
+    payments: process.env.PAYMENT_GTW_MS,
+    notifications: process.env.NOTIFICATIONS_MS
   },
   log: {
     error: process.env.LOG_ERROR == undefined || process.env.LOG_ERROR == 'true',

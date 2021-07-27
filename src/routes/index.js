@@ -3,6 +3,7 @@ const projects = require('./projects');
 const sponsors = require('./sponsors');
 const favourites = require('./favourites');
 const viewers = require('./viewers');
+const notifications = require('./notifications')
 const admins = require('./admin');
 const statusController = require('../controllers/status');
 const swaggerUi = require('swagger-ui-express');
@@ -18,6 +19,8 @@ const startRoutes = (app) => {
   app.use('/favourites', favourites)
 
   app.use('/viewers', viewers)
+
+  app.use('/notifications', notifications)
 
   app.use('/admin', admins)
 

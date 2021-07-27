@@ -4,6 +4,7 @@ const axios = require('axios');
 const { services } = require('../config')
 const { toQueryString } = require('../utils/util')
 const { ApiError } = require('../errors/ApiError');
+const notifications = require('../services/notifications')
 const errMsg = require('../errors/messages')
 
 exports.subscribeToViewing = async(req, res, next) => {
@@ -46,12 +47,19 @@ exports.addProject = async(req, res, next) => {
 
   const sponsorsResponse = await axios.post(services.sponsors + '/viewers/' + req.id + '/projects', bodyFavourites);
 
+  await notifications.sendNewViewer({userid: project.ownerid, title: project.title});
+
   /** If project reaches 3 reviewers we change the state */
   const projectData = resp.data.data;
   if (projectData.state === 'funding') {
     await axios.patch(services.projects + '/' + projectid, {
       state: 'funding'
     });
+    await notifications.sendNewState({
+      id: project.id,
+      title: project.title,
+      state: projectData.state
+    })
   }
 
   res.status(201).json(sponsorsResponse.data);
@@ -113,7 +121,7 @@ exports.voteProject = async(req, res, next) => {
   }
 
   //const project = projectResponse.data.data;
-  const { state, actualstage } = projectResponse.data.data
+  const { id, title, state, actualstage } = projectResponse.data.data
 
   if (state != 'in_progress'){
     throw ApiError.badRequest(errMsg.PROJECT_NOT_IN_PROGRESS)
@@ -141,6 +149,21 @@ exports.voteProject = async(req, res, next) => {
       state: projectData.state,
       actualstage: Number(projectData.currentStage)
     });
+
+    if (projectData.currentStage != actualstage){
+      await notifications.sendNewStageCompleted({
+        id,
+        title,
+        stage: actualstage + 1
+      })
+    }
+    if (projectData.state != state){
+      await notifications.sendNewState({
+        id,
+        title,
+        state: projectData.state
+      })
+    }
   }
 
   res.status(201).json(sponsorsResponse.data);

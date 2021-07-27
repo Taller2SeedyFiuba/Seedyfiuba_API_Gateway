@@ -33,6 +33,10 @@
     {
       "name": "admins",
       "description": "Everything about admins"
+    },
+    {
+      "name": "notifications",
+      "description": "Everything about notifications"
     }
   ],
   "paths": {
@@ -801,10 +805,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProjectSponsor"
-                  }
+                  "$ref": "#/components/schemas/ProjectSponsor"
                 }
               }
             }
@@ -905,10 +906,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ResumeProject"
-                  }
+                  "$ref": "#/components/schemas/ProjectFavourite"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The specified project id is wrong."
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "sponsors"
+        ],
+        "summary": "Project specified by id will be deleted from logged user favourite list",
+        "operationId": "favouritesDeleteProject",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the project to delete from favourites"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFavourite"
                 }
               }
             }
@@ -1195,6 +1234,189 @@
         }
       }
     },
+    "/notifications": {
+      "put": {
+        "tags": [
+          "notifications"
+        ],
+        "summary": "Update logged user notification's token",
+        "operationId": "updateNotificationToken",
+        "requestBody": {
+          "description": "A JSON object containing token",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "Application token"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userid": {
+                      "type": "string",
+                      "example": "1lmoj2LKM10ADS"
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "spoqwnASadnascAzozA"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectid}/notifications": {
+      "post": {
+        "tags": [
+          "notifications"
+        ],
+        "summary": "Subscribe the logged user to project notifications",
+        "operationId": "subscribeToProject",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectid",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "id of the project to subscribe"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "notifications"
+        ],
+        "summary": "Subscribe the logged user to project notifications",
+        "operationId": "eliminateSubscription",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "projectid",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "id of the project to eliminate subscription"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notifications/mine": {
+      "get": {
+        "tags": [
+          "notifications"
+        ],
+        "summary": "List logged user subscribed projects",
+        "operationId": "getMySubscriptions",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "projectid",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by a given project id"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of projects to retrieve"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page number of projects result to retrieve"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Subscription"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
     "/admin/users": {
       "get": {
         "tags": [
@@ -1362,11 +1584,11 @@
           },
           {
             "in": "query",
-            "name": "stage",
+            "name": "state",
             "schema": {
               "type": "string"
             },
-            "description": "Stage of the project to get"
+            "description": "State of the project to get"
           },
           {
             "in": "query",
@@ -1815,6 +2037,19 @@
           }
         }
       },
+      "ProjectFavourite": {
+        "type": "object",
+        "properties": {
+          "userid": {
+            "type": "string",
+            "example": "05yseyhiEWPNvkYYbdHL77dHKWi1"
+          },
+          "projectid": {
+            "type": "integer",
+            "example": 5
+          }
+        }
+      },
       "Wallet": {
         "type": "object",
         "properties": {
@@ -1834,6 +2069,19 @@
             "type": "string",
             "description": "Balance en ethers",
             "example": "0.0023"
+          }
+        }
+      },
+      "Subscription": {
+        "type": "object",
+        "properties": {
+          "userid": {
+            "type": "string",
+            "example": "oiasdko1kasokscw"
+          },
+          "projectid": {
+            "type": "integer",
+            "example": 4
           }
         }
       },
