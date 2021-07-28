@@ -47,7 +47,7 @@ exports.addProject = async(req, res, next) => {
 
   const sponsorsResponse = await axios.post(services.sponsors + '/viewers/' + req.id + '/projects', bodyFavourites);
 
-  await notifications.sendNewViewer({userid: project.ownerid, title: project.title});
+  await notifications.sendNewViewer({ id: project.id, title: project.title });
 
   /** If project reaches 3 reviewers we change the state */
   const projectData = resp.data.data;

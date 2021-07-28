@@ -47,9 +47,9 @@ exports.addSponsor = async(req, res, next) => {
 
   await axios.patch(services.projects + '/' + projectid, bodyProjects);
 
-  if (sponsorsResponse.data.data.newsponsor){
-    await notifications.sendNewSponsor({userid: ownerid, title});
-  }
+  //if (sponsorsResponse.data.data.newsponsor){
+  //  await notifications.sendNewSponsor({userid: ownerid, title});
+  //}
 
   if (resp.data.data.state != state){
     await notifications.sendNewState({id: projectid, title, state: resp.data.data.state});
