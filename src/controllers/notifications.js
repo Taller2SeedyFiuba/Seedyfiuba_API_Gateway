@@ -44,7 +44,7 @@ exports.getMySubscriptions = async(req, res, next) => {
     ...req.query,
     limit: (req.query.limit || 10),
     page: (req.query.page || 1),
-    userid: req.id
+    id: req.id
   }
 
   const query = toQueryString(req.query)
