@@ -37,36 +37,21 @@ exports.sendNewState = async({id, title, state}) => {
   const data = {
     title: "Novedades en proyectos",
     body: `El proyecto '${title}' ha sido promovido al estado '${stateTranslate(state)}'`,
-    projectid: id,
+    projectid: id
   }
 
   return await this.sendProjectNotification(data);
 }
 
-exports.sendNewViewer = async({userid, title}) => {
+exports.sendNewViewer = async({id, title}) => {
 
-  const data = [
-    {
-      title: "Novedades en proyectos",
-      body: `El proyecto '${title}' ha recibido un nuevo veedor`,
-      uids: [userid]
-    }
-  ]
+  const data = {
+    title: "Novedades en proyectos",
+    body: `El proyecto '${title}' ha recibido un nuevo veedor`,
+    projectid: id
+  }
 
-  return await this.sendNotification(data);
-}
-
-exports.sendNewSponsor = async({userid, title}) => {
-
-  const data = [
-    {
-      title: "Novedades de uno de tus proyectos",
-      body: `El proyecto '${title}' ha recibido un nuevo sponsor`,
-      uids: [userid]
-    }
-  ]
-
-  return await this.sendNotification(data);
+  return await this.sendProjectNotification(data);
 }
 
 
