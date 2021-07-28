@@ -20,7 +20,8 @@ const getStatus = async (req, res, next) => {
     users: "OK",
     projects: "OK",
     sponsors: "OK",
-    payments: "OK"
+    payments: "OK",
+    notifications: "OK"
   }
 
   await axios.get(services.users + '/status').
@@ -41,6 +42,12 @@ const getStatus = async (req, res, next) => {
   await axios.get(services.payments + '/status').
   catch(err => {
     responses.payments = "ERROR"
+  })
+
+  await axios.get(services.notifications + '/status').
+  catch(err => {
+    console.log(`Couldn't connect to ${services.notifications}`)
+    responses.notifications = "ERROR"
   })
 
   return res.status(200).json({

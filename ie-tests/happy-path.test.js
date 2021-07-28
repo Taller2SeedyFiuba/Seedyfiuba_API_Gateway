@@ -1,11 +1,14 @@
-const request = require('supertest');
+
 const { createApp } = require('../src/app');
+const { randomEmail } = require('./utils/utils');
 const faker = require('faker');
+
 const {
   getUid,
   getIdToken,
   firebaseLoginUser,
-  users } = require('./utils/firebase.config');
+  users,
+  firebaseCreateUser} = require('./utils/firebase.config');
 const { testAuthorized } = require('./utils/auth');
 const { getFakeProject } = require('./utils/utils')
 const { BigNumber } = require('bignumber.js')
@@ -39,6 +42,41 @@ const createProjectWithAssertion = async function (){
   }
 }
 
+const createViewerWithAssertion = async function (data){
+  await firebaseCreateUser(data);
+  const token = await getIdToken();
+  try {
+    const response = await testAuthorized(app, 'post', '/users', token, {
+      email: data.email,
+      firstname: faker.name.firstName(),
+      lastname: faker.name.lastName(),
+      birthdate: '1990-03-04',
+    }).expect(201)
+    expect(response.body.status).toEqual('success');
+
+    const viewerres = await testAuthorized(app, 'post', '/viewers', token).expect(201);
+    expect(viewerres.body.status).toEqual('success');
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+const createUserWithAssertion = async function (data){
+  await firebaseCreateUser(data);
+  const token = await getIdToken();
+  try {
+    const response = await testAuthorized(app, 'post', '/users', token, {
+      email: data.email,
+      firstname: faker.name.firstName(),
+      lastname: faker.name.lastName(),
+      birthdate: '1990-03-04',
+    }).expect(201)
+    expect(response.body.status).toEqual('success');
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
 const getEntrepreneurWalletBalanceWithAssertion = async function(){
   let balance = -1;
   const token = await getIdToken();
@@ -54,11 +92,33 @@ const getEntrepreneurWalletBalanceWithAssertion = async function(){
 }
 
 
+
 // Comienzan los tests
 describe('Correct Flow', function() {
   let pid = -1;
   let entrepreneurWalletBalance = -1;
+  const seer2 = {
+    email: randomEmail(),
+    pass: 'Qwe12345'
+  }
+  const seer1 = {
+    email: randomEmail(),
+    pass: 'Qwe12345'
+  }
+  const seer3 = {
+    email: randomEmail(),
+    pass: 'Qwe12345'
+  }
+  const sponsor = {
+    email: randomEmail(),
+    pass: 'Qwe12345'
+  }
+
   beforeAll(async () => {
+    await createViewerWithAssertion(seer1);
+    await createViewerWithAssertion(seer2);
+    await createViewerWithAssertion(seer3);
+    await createUserWithAssertion(sponsor);
     await firebaseLoginUser(users.entrepreneur);
     pid =  await createProjectWithAssertion();
     entrepreneurWalletBalance = await getEntrepreneurWalletBalanceWithAssertion();
@@ -66,7 +126,7 @@ describe('Correct Flow', function() {
 
   it('Authorized response seer1', async (done) => {
     const path = `/projects/${pid}/review`;
-    await firebaseLoginUser(users.seer1);
+    await firebaseLoginUser(seer1);
     const token = await getIdToken();
     testAuthorized(app, 'post', path, token, {})
     .expect(201)
@@ -78,7 +138,7 @@ describe('Correct Flow', function() {
 
   it('Authorized response seer2', async (done) => {
     const path = `/projects/${pid}/review`;
-    await firebaseLoginUser(users.seer2);
+    await firebaseLoginUser(seer2);
     const token = await getIdToken();
     testAuthorized(app, 'post', path, token, {})
     .expect(201)
@@ -90,7 +150,7 @@ describe('Correct Flow', function() {
 
   it('Authorized response seer3', async (done) => {
     const path = `/projects/${pid}/review`;
-    await firebaseLoginUser(users.seer3);
+    await firebaseLoginUser(seer3);
     const token = await getIdToken();
     testAuthorized(app, 'post', path, token, {})
     .expect(201)
@@ -115,7 +175,7 @@ describe('Correct Flow', function() {
   });
 
   it('Then project gets a sponsor added', async (done) => {
-    await firebaseLoginUser(users.sponsor);
+    await firebaseLoginUser(sponsor);
     const token = await getIdToken();
     const uid = await getUid();
     const path = `/projects/${pid}/sponsors`;
@@ -141,7 +201,7 @@ describe('Correct Flow', function() {
   });
 
   it('Then project gets completly funded, with more eths that correspond', async (done) => {
-    await firebaseLoginUser(users.sponsor);
+    await firebaseLoginUser(sponsor);
     const token = await getIdToken();
     const uid = await getUid();
     const path = `/projects/${pid}/sponsors`;
@@ -185,7 +245,7 @@ describe('Correct Flow', function() {
 
   it('Then project gets seer1 vote', async (done) => {
     const path = `/projects/${pid}/vote`;
-    await firebaseLoginUser(users.seer1);
+    await firebaseLoginUser(seer1);
     const token = await getIdToken();
     testAuthorized(app, 'post', path, token, { 'stage': 0 })
     .expect(201)
@@ -197,7 +257,7 @@ describe('Correct Flow', function() {
 
   it('Then project gets seer2 vote', async (done) => {
     const path = `/projects/${pid}/vote`;
-    await firebaseLoginUser(users.seer2);
+    await firebaseLoginUser(seer2);
     const token = await getIdToken();
     testAuthorized(app, 'post', path, token, { 'stage': 0 })
     .expect(201)
@@ -224,7 +284,7 @@ describe('Correct Flow', function() {
 
   it('Then project gets seer3 vote', async (done) => {
     const path = `/projects/${pid}/vote`;
-    await firebaseLoginUser(users.seer3);
+    await firebaseLoginUser(seer3);
     const token = await getIdToken();
     testAuthorized(app, 'post', path, token, { 'stage': 0 })
     .expect(201)
@@ -261,7 +321,7 @@ describe('Correct Flow', function() {
 
   it('Then project gets seer1 vote', async (done) => {
     const path = `/projects/${pid}/vote`;
-    await firebaseLoginUser(users.seer1);
+    await firebaseLoginUser(seer1);
     const token = await getIdToken();
     testAuthorized(app, 'post', path, token, { 'stage': 1 })
     .expect(201)
@@ -273,7 +333,7 @@ describe('Correct Flow', function() {
 
   it('Then project gets seer2 vote', async (done) => {
     const path = `/projects/${pid}/vote`;
-    await firebaseLoginUser(users.seer2);
+    await firebaseLoginUser(seer2);
     const token = await getIdToken();
     testAuthorized(app, 'post', path, token, { 'stage': 1 })
     .expect(201)
@@ -285,7 +345,7 @@ describe('Correct Flow', function() {
 
   it('Then project gets seer3 vote', async (done) => {
     const path = `/projects/${pid}/vote`;
-    await firebaseLoginUser(users.seer3);
+    await firebaseLoginUser(seer3);
     const token = await getIdToken();
     testAuthorized(app, 'post', path, token, { 'stage': 1 })
     .expect(201)

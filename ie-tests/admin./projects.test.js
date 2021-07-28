@@ -2,12 +2,9 @@ const { createApp } = require('../../src/app');
 const faker = require('faker');
 const {
   getIdToken,
-  firebaseCreateUser,
-  firebaseLoginUser,
-  getUid,
   loginUser,
   users } = require('../utils/firebase.config');
-const { testUnauthorized, testAuthorized } = require('../utils/auth');
+const { testAuthorized } = require('../utils/auth');
 const { getFakeProject } = require('../utils/utils')
 const app = createApp();
 

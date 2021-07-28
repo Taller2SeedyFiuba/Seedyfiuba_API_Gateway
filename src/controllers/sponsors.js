@@ -2,22 +2,25 @@
 
 const axios = require('axios');
 const { services }  = require('../config')
-
+const { toQueryString } = require('../utils/util')
 const { ApiError } = require('../errors/ApiError');
+const notifications = require('../services/notifications')
 const errMsg = require('../errors/messages')
 
 exports.addSponsor = async(req, res, next) => {
   const { projectid } = req.params
   let { amount } = req.body
 
-  const projectResponse = await axios.get(services.projects + '/' + projectid).
-  catch(err => {
+  let projectResponse = 0;
+  try {
+    projectResponse = await axios.get(services.projects + '/' + projectid)
+  }catch(err){
     if (err.response && err.response.status == ApiError.codes.notFound){
       throw ApiError.badRequest(err.response.data.message)
     } else { throw err }
-  })
+  }
 
-  const { ownerid, state } = projectResponse.data.data
+  const { ownerid, state, title } = projectResponse.data.data
   if (ownerid == req.id)
     throw ApiError.badRequest(errMsg.OWNER_CANT_SPONSOR);
 
@@ -44,6 +47,14 @@ exports.addSponsor = async(req, res, next) => {
 
   await axios.patch(services.projects + '/' + projectid, bodyProjects);
 
+  if (sponsorsResponse.data.data.newsponsor){
+    await notifications.sendNewSponsor({userid: ownerid, title});
+  }
+
+  if (resp.data.data.state != state){
+    await notifications.sendNewState({id: projectid, title, state: resp.data.data.state});
+  }
+
   res.status(201).json({
     status: 'success',
     data: {
@@ -55,11 +66,17 @@ exports.addSponsor = async(req, res, next) => {
 };
 
 exports.getMySponsors = async(req, res, next) => {
-  const sponsorsQuery = "userid=" + req.id
-                      + "&limit=" + (req.query.limit || 10)
-                      + "&page=" + (req.query.page || 1)
 
-  const sponsorsResponse = await axios.get(services.sponsors + '/sponsors?' + sponsorsQuery);
+  req.query = {
+    ...req.query,
+    limit: (req.query.limit || 10),
+    page: (req.query.page || 1),
+    userid: req.id
+  }
+
+  const sponsorsQuery = toQueryString(req.query)
+
+  const sponsorsResponse = await axios.get(services.sponsors + '/sponsors' + sponsorsQuery);
   if (sponsorsResponse.data.data.length == 0)
     return res.status(200).json(sponsorsResponse.data);
 
@@ -105,11 +122,15 @@ exports.addFavourite = async(req, res, next) => {
 };
 
 exports.getMyFavourites = async(req, res, next) => {
-  const sponsorsQuery = "userid=" + req.id
-                      + "&limit=" + (req.query.limit || 10)
-                      + "&page=" + (req.query.page || 1)
+  req.query = {
+    ...req.query,
+    limit: (req.query.limit || 10),
+    page: (req.query.page || 1),
+    userid: req.id
+  }
+  const sponsorsQuery = toQueryString(req.query)
 
-  const sponsorsResponse = await axios.get(services.sponsors + '/favourites?' + sponsorsQuery);
+  const sponsorsResponse = await axios.get(services.sponsors + '/favourites' + sponsorsQuery);
   if (sponsorsResponse.data.data.length == 0)
     return res.status(200).json(sponsorsResponse.data);
 
@@ -119,3 +140,23 @@ exports.getMyFavourites = async(req, res, next) => {
 
   return res.status(200).json(projectsResponse.data);
 };
+
+
+exports.deleteFavourite = async(req, res, next) => {
+
+  const { projectid } = req.params
+
+  const uri = `/users/${req.id}/projects/${projectid}`
+
+  const favouritesResponse = await axios.delete(services.sponsors + '/favourites/' + uri);
+
+  const bodyProjects = {
+    favouritescount: -1
+  }
+  //Idem a sponsors, si se llega aca y falla queda un fav fantasma cargado.
+  await axios.patch(services.projects + '/' + projectid, bodyProjects);
+
+  return res.status(201).json(favouritesResponse.data);
+};
+
+

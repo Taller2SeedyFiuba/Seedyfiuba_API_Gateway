@@ -1,12 +1,18 @@
 'use strict'
 
 const axios = require('axios');
-const { pick, getQueryString } = require('../utils/util')
+const { pick, getQueryString, toQueryString } = require('../utils/util')
 const { services }  = require('../config')
 
 const { ApiError } = require('../errors/ApiError');
 const errMsg = require('../errors/messages')
 
+const publicStates = [
+  'funding',
+  'canceled',
+  'in_progress',
+  'completed'
+]
 
 const publicAttributes = [
   'ownerid',
@@ -29,8 +35,24 @@ const publicAttributes = [
 
 exports.search = async(req, res, next) => {
 
-  const query = getQueryString(req.originalUrl)
-  //Aca falta filtrar los proyectos cancelados o en estado on_review
+  let state = []
+
+  if (req.query.state == 'on_review'){
+    throw ApiError.badRequest(errMsg.WRONG_STATE)
+  } else if (req.query.state instanceof Array){
+    state = req.query.state.filter(elem => elem != 'on_review')
+  } else if (publicStates.includes(req.query.state)){
+    state.push(req.query.state)
+  } else {
+    state = publicStates
+  }
+
+  req.query = {
+    ...req.query,
+    state
+  }
+
+  const query = toQueryString(req.query)
   const reqRes = await axios.get(services.projects + '/search' + query);
 
   res.status(200).json(reqRes.data);
