@@ -29,10 +29,8 @@ A firebase account must be set-up for Auth-Validation to work.
    ```git
    git clone https://github.com/Taller2SeedyFiuba/Seedyfiuba_API_Gateway
    ```
-2. Install NPM packages
-   ```npm
-   npm install
-   ```
+2. [Install Docker](https://docs.docker.com/engine/install/), following it's official installation guide for your os
+   
 3. Set up environment variables based on ```web-variables.env.example```.
 
 ## Usage
