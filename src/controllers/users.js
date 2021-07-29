@@ -42,7 +42,6 @@ exports.post = async(req, res, next) => {
    ownerid: req.id
   });
 
-  //Devolver info de la wallet?
   const response = reqRes.data
   response.data = pick(response.data, privateAttributes);
   res.status(201).json(response);
@@ -78,8 +77,7 @@ exports.adminListUsers = async(req, res, next) => {
   const query = getQueryString(req.originalUrl)
 
   const reqRes = await axios.get(services.users + '/users/' + query);
-  //Se podria hacer un especie de resumen de usuario al igual que en proyectos.
-  //Ya sea aca o en el micro de usuarios. Por ejemplo id, firstname, email, isadmin
+
   res.status(200).json(reqRes.data);
 };
 

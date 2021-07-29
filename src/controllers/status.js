@@ -7,15 +7,6 @@ const { ApiError } = require('../errors/ApiError');
 
 const getStatus = async (req, res, next) => {
 
-  //NOTA: Me encantaria modularizar esto dentro de un for por cada servicio, pero
-  //estuve teniendo problemas con async await. Por mas que la llamada fallase no me
-  //cambiaba el estado de "OK" a "ERROR"
-
-  //const services = {
-  //  users: USERS_URL,
-  //  projects: PROJECTS_URL,
-  //  sponsors: SPONSORS_URL
-  //}
   const responses = {
     users: "OK",
     projects: "OK",
