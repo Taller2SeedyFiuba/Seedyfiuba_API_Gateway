@@ -141,7 +141,6 @@ exports.adminGetProject = async(req, res, next) => {
   let reqRes = await axios.get(services.projects + '/' + req.params.projectid);
   const response = reqRes.data
 
-  //Por que un admin querria tener un proyecto como favorito?
   const query = 'projectid=' + req.params.projectid + '&userid=' + req.id
   reqRes = await axios.get(services.sponsors + '/favourites?' + query);
 
