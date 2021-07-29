@@ -33,12 +33,12 @@ const getFakeProject = function(){
       {
         "title": faker.commerce.department(),
         "description": faker.company.catchPhrase(),
-        "amount": Math.random().toPrecision(2)//.replace(/\.?0+$/,"")
+        "amount": parseFloat(Math.random().toPrecision(2).toString())//.replace(/\.?0+$/,"")
       },
       {
         "title": faker.commerce.department(),
         "description": faker.company.catchPhrase(),
-        "amount": Math.random().toPrecision(2)//.replace(/\.?0+$/,"")
+        "amount": parseFloat(Math.random().toPrecision(2).toString())//.replace(/\.?0+$/,"")
       },
     ]
   }

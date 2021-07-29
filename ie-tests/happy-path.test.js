@@ -180,12 +180,12 @@ describe('Correct Flow', function() {
     const uid = await getUid();
     const path = `/projects/${pid}/sponsors`;
     testAuthorized(app, 'post', path, token, {
-      amount: data.stages[0].amount,
+      amount: data.stages[0].amount.toString(),
     })
     .then(response => {
       expect(response.body.status).toEqual('success');
       expect(response.body.data).toMatchObject({
-        "amount": data.stages[0].amount,
+        "amount": parseFloat(data.stages[0].amount).toString(),
         "projectid": `${pid}`,
         "userid": uid,
       })
@@ -200,6 +200,21 @@ describe('Correct Flow', function() {
     done();
   });
 
+  it('Then project a sponsor with no funds tries to fund', async (done) => {
+    await firebaseLoginUser(users.sponsor);
+    const token = await getIdToken();
+    const uid = await getUid();
+    const path = `/projects/${pid}/sponsors`;
+    testAuthorized(app, 'post', path, token, {
+      amount: data.stages[0].amount.toString(),
+    })
+    .expect(400)
+    .then(response => {
+      expect(response.body.status).toEqual('error');
+      done();
+    })
+  });
+
   it('Then project gets completly funded, with more eths that correspond', async (done) => {
     await firebaseLoginUser(sponsor);
     const token = await getIdToken();
@@ -211,7 +226,7 @@ describe('Correct Flow', function() {
     .then(response => {
       expect(response.body.status).toEqual('success');
       expect(response.body.data).toMatchObject({
-        "amount": data.stages[1].amount,
+        "amount": parseFloat(data.stages[1].amount).toString(),
         "projectid": `${pid}`,
         "userid": uid,
       })
