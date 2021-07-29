@@ -69,6 +69,7 @@ This repository is configured using GitHub Actions. When ```main``` is updated a
 
 * HEROKU_API_KEY
 * HEROKU_APP_NAME
+* HEROKU_EMAIL
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
