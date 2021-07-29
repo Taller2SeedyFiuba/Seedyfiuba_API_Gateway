@@ -200,6 +200,21 @@ describe('Correct Flow', function() {
     done();
   });
 
+  it('Then project a sponsor with no funds tries to fund', async (done) => {
+    await firebaseLoginUser(users.sponsor);
+    const token = await getIdToken();
+    const uid = await getUid();
+    const path = `/projects/${pid}/sponsors`;
+    testAuthorized(app, 'post', path, token, {
+      amount: data.stages[0].amount.toString(),
+    })
+    .expect(400)
+    .then(response => {
+      expect(response.body.status).toEqual('error');
+      done();
+    })
+  });
+
   it('Then project gets completly funded, with more eths that correspond', async (done) => {
     await firebaseLoginUser(sponsor);
     const token = await getIdToken();
