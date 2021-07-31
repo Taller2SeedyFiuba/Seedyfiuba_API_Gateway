@@ -6,7 +6,8 @@ const {
   addSponsor,
   getMySponsors,
   addFavourite,
-  getMyFavourites
+  getMyFavourites,
+  deleteFavourite
 } = require('./sponsors');
 
 const { ApiError } = require('../errors/ApiError');
@@ -276,23 +277,11 @@ test('/addFavourite successful response', async () => {
     }
   }
 
-  const projectResponse = {
+  const projectGetResponse = {
     data: {
       status: 'success',
       data: {
-        "ownerid": "entrepreneurid",
-        "state": "funding"
-      }
-    }
-  };
-
-  const paymentResponse = {
-    data: {
-      status: 'success',
-      data: {
-        "amount": "13.15",
-        "missingAmount": "10.53",
-        "state": "funding"
+        "ownerid": "entrepreneurid",  //Not the owner
       }
     }
   };
@@ -301,8 +290,17 @@ test('/addFavourite successful response', async () => {
     data: {
       status: 'success',
       data: {
-        "ownerid": "entrepreneurid",
-        "newsponsor": true
+        "userid": "userid",
+        "projectid": 1
+      }
+    }
+  };
+
+  const projectPatchResponse = {
+    data: {
+      status: 'success',
+      data: {
+        "Does-not-matter": 5
       }
     }
   };
@@ -311,22 +309,135 @@ test('/addFavourite successful response', async () => {
     status: 'success',
     data: {
       "userid": "userid",
-      "projectid": 1,
-      "amount" : "13.15"
+      "projectid": 1
     }
   }
 
   axios.get
-    .mockReturnValueOnce(projectResponse)
+    .mockReturnValueOnce(projectGetResponse)
 
   axios.post
-    .mockReturnValueOnce(paymentResponse)
     .mockReturnValueOnce(sponsorResponse)
+
+  axios.patch
+    .mockReturnValueOnce(projectPatchResponse)
 
   const res = mockResponse();
 
-  await addSponsor(req, res);
+  await addFavourite(req, res);
 
   expect(res.status).toHaveBeenCalledWith(201);
+  expect(res.json).toHaveBeenCalledWith(resp);
+});
+
+
+test('/getMyFavourites successful response', async () => {
+  const req = {
+    id: 'userid',
+    query: {
+      limit: 5,
+      page: 2,
+      projectid: 6
+    }
+  }
+
+  const sponsorResponse = {
+    data: {
+      status: 'success',
+      data: [
+        {
+          'userid': 'userid',
+          'projectid': 3
+        }
+      ]
+    }
+  };
+
+  const projectResponse = {
+    data: {
+      status: 'success',
+      data: [
+        {
+          'ownerid': 'userid',
+          'id': 3,
+          'noimporta': 'no-importa'
+        },
+        {
+          'ownerid': 'userid',
+          'id': 2,
+          'noimporta': 'no-importa'
+        }
+      ]
+    }
+  };
+
+  const resp = {
+    status: 'success',
+    data: projectResponse.data.data
+  }
+
+  axios.get
+    .mockReturnValueOnce(sponsorResponse)
+    .mockReturnValueOnce(projectResponse)
+
+
+  const res = mockResponse();
+
+  await getMyFavourites(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(200);
+  expect(res.json).toHaveBeenCalledWith(resp);
+});
+
+
+test('/deleteFavourite successful response', async () => {
+  const req = {
+    id: 'userid',
+    body: {
+      amount: 20
+    },
+    params: {
+      projectid: 1
+    }
+  }
+
+  const sponsorResponse = {
+    data: {
+      status: 'success',
+      data: {
+        "userid": "userid",
+        "projectid": 1
+      }
+    }
+  };
+
+  const projectResponse = {
+    data: {
+      status: 'success',
+      data: {
+        "ownerid": "entrepreneurid",
+      }
+    }
+  };
+
+  const resp = {
+    status: 'success',
+    data: {
+      "userid": "userid",
+      "projectid": 1
+    }
+  }
+
+  axios.delete
+    .mockReturnValueOnce(sponsorResponse)
+
+  axios.get
+    .mockReturnValueOnce(projectResponse)
+
+  const res = mockResponse();
+
+  await deleteFavourite(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(200);
   expect(res.json).toHaveBeenCalledWith(resp);
 });

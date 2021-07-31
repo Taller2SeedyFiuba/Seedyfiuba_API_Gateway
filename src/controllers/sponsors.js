@@ -47,10 +47,6 @@ exports.addSponsor = async(req, res, next) => {
 
   await axios.patch(services.projects + '/' + projectid, bodyProjects);
 
-  //if (sponsorsResponse.data.data.newsponsor){
-  //  await notifications.sendNewSponsor({userid: ownerid, title});
-  //}
-
   if (resp.data.data.state != state){
     await notifications.sendNewState({id: projectid, title, state: resp.data.data.state});
   }
@@ -90,21 +86,18 @@ exports.getMySponsors = async(req, res, next) => {
 
 exports.addFavourite = async(req, res, next) => {
   const { projectid } = req.params
-  const projectResponse = await axios.get(services.projects + '/' + projectid).
-  catch(err => {
+  let projectResponse = 0;
+  try {
+    projectResponse = await axios.get(services.projects + '/' + projectid)
+  }catch(err){
     if (err.response && err.response.status == ApiError.codes.notFound){
       throw ApiError.badRequest(err.response.data.message)
     } else { throw err }
-  })
+  }
 
-  const { ownerid, state } = projectResponse.data.data
+  const { ownerid } = projectResponse.data.data
   if (ownerid == req.id)
     throw ApiError.badRequest(errMsg.OWNER_CANT_FAVOURITE);
-  //Por ahora no las tenemos en cuenta
-  //if (state != 'funding'){
-  //  if (state == 'on_review') throw ApiError.badRequest(errMsg.PROJECT_NOT_FOUND)
-  //  throw ApiError.badRequest(errMsg.PROJECT_NOT_ON_FUNDING)
-  //}
 
   const bodyFavourites = {
     userid: req.id,
@@ -115,7 +108,7 @@ exports.addFavourite = async(req, res, next) => {
   const bodyProjects = {
     favouritescount: 1
   }
-  //Idem a sponsors, si se llega aca y falla queda un fav fantasma cargado.
+
   await axios.patch(services.projects + '/' + projectid, bodyProjects);
 
   return res.status(201).json(favouritesResponse.data);
@@ -153,10 +146,10 @@ exports.deleteFavourite = async(req, res, next) => {
   const bodyProjects = {
     favouritescount: -1
   }
-  //Idem a sponsors, si se llega aca y falla queda un fav fantasma cargado.
+
   await axios.patch(services.projects + '/' + projectid, bodyProjects);
 
-  return res.status(201).json(favouritesResponse.data);
+  return res.status(200).json(favouritesResponse.data);
 };
 
 

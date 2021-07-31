@@ -33,7 +33,7 @@ exports.addProject = async(req, res, next) => {
     throw ApiError.badRequest(errMsg.PROJECT_NOT_ON_REVIEW)
   }
 
-  const { ownerid, state } = projectResponse.data.data
+  const { ownerid } = projectResponse.data.data
   if (ownerid == req.id){
     throw ApiError.badRequest(errMsg.OWNER_CANT_REVIEW);
   }
@@ -120,7 +120,6 @@ exports.voteProject = async(req, res, next) => {
     } else { throw err }
   }
 
-  //const project = projectResponse.data.data;
   const { id, title, state, actualstage } = projectResponse.data.data
 
   if (state != 'in_progress'){
