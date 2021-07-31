@@ -2,7 +2,7 @@
 
 # SeedyFiuba API Gateway
 
-Microservicio que actua como proxy de entrada al ecosistema back-end de SeedyFiuba.
+Microservice that acts as a proxy to the Seedyfiuba ecosystem.
 
 ### Built With
 
@@ -29,17 +29,34 @@ A firebase account must be set-up for Auth-Validation to work.
    ```git
    git clone https://github.com/Taller2SeedyFiuba/Seedyfiuba_API_Gateway
    ```
-2. Install NPM packages
-   ```npm
-   npm install
-   ```
+2. [Install Docker](https://docs.docker.com/engine/install/), following it's official installation guide for your os
+   
 3. Set up environment variables based on ```web-variables.env.example```.
 
 ## Usage
+Create external network if not exists:
+
+```docker
+docker network create my-net
+```
+
+Run service with associated DB:
 
 ```docker
 docker-compose up --b
 ```
+
+It's important to acknowledge that microservice start may fail if database is not ready. Solution to this situation resides in running the service again.
+
+### Dependencies
+
+For this microservice to correctly work .env variable must be set correctly. Instructions and example can be found in web-variables.env.example. For local development use web-variables.env.example.test.
+
+* USERS_MS
+* PROJECTS_MS
+* SPONSORS_MS
+* PAYMENT_GTW_MS
+* NOTIFICATIONS_MS
 
 ### Docs
 
